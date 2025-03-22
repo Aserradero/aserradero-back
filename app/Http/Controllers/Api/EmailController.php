@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Mail\ContactoMail;
 use Illuminate\Support\Facades\Mail;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 
 class EmailController extends Controller
@@ -19,11 +20,11 @@ class EmailController extends Controller
 
         if ($existe) {
             $numero = rand(100000, 999999);
+            $code = rand(1000, 9999);
 
             $datos = [
                 'email' => $request->email,
             ];
-
 
 
 
@@ -32,11 +33,38 @@ class EmailController extends Controller
                     ->subject('Código de recuperación')
                     ->from('unidadecosanmateo@uniecosanmateo.icu', 'Unidad Económica San Mateo');
             });
+
+
+            return response()->json([
+                'emailVe' => $datos['email'],
+                'codigo' => $code
+            ]);
+
         } else {
             return response()->json(['message' => 'El correo no existe'], 404);
 
         }
 
 
+
+    }
+
+
+
+    public function updatePassword(Request $request)
+    {
+      
+        // Verificar que el correo exista en la base de datos
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            return response()->json(['message' => 'El correo no está registrado.'], 404);
+        }
+
+        // Actualizar la contraseña
+        $user->password = Hash::make($request->new_password);  // Hash para encriptar la nueva contraseña
+        $user->save();
+
+        return response()->json(['message' => 'Contraseña actualizada correctamente.'], 200);
     }
 }

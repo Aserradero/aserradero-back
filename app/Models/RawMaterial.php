@@ -9,4 +9,5 @@ class RawMaterial extends Model
 {
     use HasFactory;
     protected $fillable = ['identificadorP', 'updated_at'];
+
 }

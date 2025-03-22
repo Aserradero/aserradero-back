@@ -81,3 +81,6 @@ Route::controller(ProductController::class)->group(function () {
 //Controlador para enviar un correo electronico
 Route::post('/email', [EmailController::class, 'enviarCorreo']);
 
+
+//Controlador para actualizar el correo
+Route::post('/update-pass',action:[EmailController::class,'updatePassword']);
