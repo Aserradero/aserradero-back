@@ -19,7 +19,7 @@ class EmailController extends Controller
         $existe = User::where('email', $request->email)->exists();
 
         if ($existe) {
-            $numero = rand(100000, 999999);
+            $numero = rand(1000, 9999);
             $code = rand(1000, 9999);
 
             $datos = [
@@ -28,7 +28,7 @@ class EmailController extends Controller
 
 
 
-            Mail::raw("Tu código es: " . $numero, function ($message) use ($datos) {
+            Mail::raw("Tu código es: " . $code, function ($message) use ($datos) {
                 $message->to($datos['email'])
                     ->subject('Código de recuperación')
                     ->from('unidadecosanmateo@uniecosanmateo.icu', 'Unidad Económica San Mateo');

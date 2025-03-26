@@ -100,7 +100,6 @@ class UseController extends Controller
     }
 
 
-
     public function login(Request $request)
     {
 
@@ -178,5 +177,6 @@ class UseController extends Controller
             ], 500);
         }
     }
+
 
 }
