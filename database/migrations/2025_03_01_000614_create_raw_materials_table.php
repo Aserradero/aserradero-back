@@ -24,11 +24,6 @@ return new class extends Migration
 
             $table->timestamps();
 
-
-
-            //llaves foraneas
-            $table->foreignId('rawMaterialInventory_id')->constrained('raw_material_inventories')->onDelete('cascade');
-
         });
     }
 

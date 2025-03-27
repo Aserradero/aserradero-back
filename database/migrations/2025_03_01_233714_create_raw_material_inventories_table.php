@@ -14,12 +14,12 @@ return new class extends Migration
     {
         Schema::create('raw_material_inventories', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('idMateria');
             $table->integer('stockIdeal');
+            $table->foreignId('idUsuario')->constrained('users')->onDelete('cascade');            
+            $table->foreign('idMateria')->references('id')->on('raw_materials')->onDelete('cascade');
             $table->timestamps();
-            $table->foreignId('idUsuario')->constrained('users')->onDelete('cascade');
-
-            
-        });
+    });
     }
 
     /**
