@@ -9,6 +9,7 @@ class ProductInventory extends Model
 {
     use HasFactory;
     protected $fillable = [
+       'idProducto',
        'precioUnitario',
        'stockIdealPT',
        'idUsuario'

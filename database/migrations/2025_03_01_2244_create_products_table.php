@@ -27,9 +27,6 @@ return new class extends Migration
 
             //llave foranea nombre de la llave forenea-> referencia a la tabla y en automatico toma el id
             
-            //llave forane de usuario
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-
 
     
         });

@@ -77,6 +77,14 @@ Route::controller(ProductController::class)->group(function () {
     Route::delete('/product/{id}', 'destroy');
 });
 
+Route::controller(ProductInventoryController::class)->group(function () {
+    Route::get('/productsInventory', 'index');
+    Route::post('/productsInventory',  [ProductInventoryController::class, 'storeMultiple']);
+    Route::get('/productInventory/{id}', 'show');
+    Route::put('/productInventory/{id}', 'update');
+    Route::delete('/productInventory/{id}', 'destroy');
+});
+
 
 //Controlador para enviar un correo electronico
 Route::post('/email', [EmailController::class, 'enviarCorreo']);

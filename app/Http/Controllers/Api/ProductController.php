@@ -34,7 +34,7 @@ class ProductController extends Controller
 
     foreach ($productos as $producto) {
         // Crear una nueva instancia de Product
-        $nuevoProducto = new Product();
+        $nuevoProducto = new Product(); 
 
         // Asignar valores
         $nuevoProducto->precio = $producto['precio'];
@@ -46,7 +46,6 @@ class ProductController extends Controller
         $nuevoProducto->piesTabla = $producto['piesTabla'];
         $nuevoProducto->fechaRegistro = $producto['fechaRegistro'];
         $nuevoProducto->identificadorP = $producto['identificadorP'];
-        $nuevoProducto->user_id = $producto['user_id'];
 
         // Guardar en la base de datos
         $nuevoProducto->save();
@@ -86,7 +85,6 @@ class ProductController extends Controller
             'largo' => 'required|numeric',
             'piesTabla' => 'required|numeric',
             'fechaRegistro' => 'required|date',
-            'user_id' => 'required|integer',
             'identificadorP' => 'required|integer'
         ]);
 

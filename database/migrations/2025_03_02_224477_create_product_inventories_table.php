@@ -13,14 +13,12 @@ return new class extends Migration
     {
         Schema::create('product_inventories', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('idProducto');
             $table->double('precioUnitario',11,4);
             $table->double('stockIdealPT',11,4);
-            $table->timestamps();
-           
-            //llave forane de usuario
-
             $table->foreignId('idUsuario')->constrained('users')->onDelete('cascade');
-            
+            $table->foreign('idProducto')->references('id')->on('products')->onDelete('cascade');
+            $table->timestamps();          
       });
     }
 
