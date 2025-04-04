@@ -19,4 +19,5 @@ class RawMaterialInventory extends Model
      {
          return $this->belongsTo(RawMaterial::class, 'idMateria'); // 'idProducto' es la clave foránea
      }
+    
 }

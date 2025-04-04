@@ -193,6 +193,7 @@ class UseController extends Controller
             //$token = $user->createToken('AuthToken')->plainTextToken;
             $token = $user->createToken('AuthToken', ['*'], Carbon::now()->addMinutes(env('SANCTUM_TOKEN_EXPIRATION')))->plainTextToken;
 
+
             return response()->json([
                 'message' => 'Login exitoso',
                 'user' => [
@@ -278,7 +279,6 @@ class UseController extends Controller
 
         return response()->json($user);  // Devuelve el usuario actualizado como respuesta
     }
-
     /*
     public function someApiMethod(Request $request)
     {

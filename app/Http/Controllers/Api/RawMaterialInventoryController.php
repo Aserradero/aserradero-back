@@ -50,7 +50,6 @@ class RawMaterialInventoryController extends Controller
         }
 
         return response()->json(["message" => "Materiax registradas correctamente.", "materials" => $productosGuardados], 201);
-    
     }
 
     /**

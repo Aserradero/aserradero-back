@@ -58,6 +58,7 @@ class RawMaterialController extends Controller
     }
 
     return response()->json(["message" => "Productos registrados correctamente.", "materials" => $productosGuardados], 201);
+
     }
 
     /**
@@ -132,5 +133,5 @@ class RawMaterialController extends Controller
             'total_actualizados' => $totalActualizados,
             'ids_no_encontrados' => $idsNoEncontrados
         ], 200);
-    }
+    } 
 }
