@@ -68,6 +68,7 @@ Route::controller(UseController::class)->group(function () {
 
 //El usuario debe de estar autenticado para cerrar sesion
 Route::middleware('auth:sanctum')->post('/logout', [UseController::class, 'logout']);
+//Route::post('/logout', [UseController::class, 'logout']);
 
 
 Route::controller(ProductController::class)->group(function () {
@@ -88,7 +89,7 @@ Route::controller(ProductInventoryController::class)->group(function () {
 
 Route::controller(RawMaterialInventoryController::class)->group(function () {
     Route::get('/rawMaterialsInventory', 'index');
-    Route::post('/rawMaterialInventory',  [RawMaterialInventoryController::class, 'storeMultiple']);
+    Route::post('/rawMaterialInventory', [RawMaterialInventoryController::class, 'storeMultiple']);
     Route::get('/rawMaterialInventory/{id}', 'show');
     Route::put('/rawMaterialInventory/{id}', 'update');
     Route::delete('/rawMaterialInventory/{id}', 'destroy');
