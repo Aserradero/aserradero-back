@@ -116,5 +116,4 @@ Route::get('/confirmarEmail', [EmailController::class, 'confirmarEmail']);
 
 Route::post('/verify-email', [EmailController::class, 'verifyEmail']);
 Route::get('/verify-email/{token}', [EmailController::class, 'verifyToken']);
-Route::middleware(['auth:sanctum', 'inactividad'])->get('/protected-endpoint', [UseController::class, 'someApiMethod']);
 
