@@ -10,8 +10,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Http\Controllers\EmailController;
-use Carbon\Carbon;
-
 
 
 class UseController extends Controller
@@ -190,9 +188,7 @@ class UseController extends Controller
             }
 
             //  Solo si no tiene token, se crea uno nuevo
-            //$token = $user->createToken('AuthToken')->plainTextToken;
-            $token = $user->createToken('AuthToken', ['*'], Carbon::now()->addMinutes(env('SANCTUM_TOKEN_EXPIRATION')))->plainTextToken;
-
+            $token = $user->createToken('AuthToken')->plainTextToken;
 
             return response()->json([
                 'message' => 'Login exitoso',
@@ -279,47 +275,6 @@ class UseController extends Controller
 
         return response()->json($user);  // Devuelve el usuario actualizado como respuesta
     }
-    /*
-    public function someApiMethod(Request $request)
-    {
-        $token = $request->bearerToken();
-
-        // Verificar si el token ha expirado
-        $user = Auth::user();
-        if ($user && $user->tokens->isEmpty()) {
-            return response()->json(['message' => 'Sesión expirada'], 401);
-        }
-
-        return response()->json(['message' => 'La sesión sigue activa'], 202);
-    }
-    */
-    public function someApiMethod(Request $request)
-    {
-        // Obtener el token
-        $token = $request->bearerToken();
-
-        // Verificar si el usuario está autenticado
-        $user = Auth::user();
-        if ($user && $user->tokens->isEmpty()) {
-            return response()->json(['message' => 'Sesión expirada'], 401);
-        }
-
-        // Obtener el token de la base de datos (o cualquier otra propiedad donde lo guardaste)
-        $tokenExpiration = $user->tokens->first()->created_at;  // Asumiendo que estás almacenando la fecha de creación del token en la base de datos
-
-        // Calcular el tiempo transcurrido desde que se emitió el token
-        $timeElapsed = Carbon::now()->diffInMinutes($tokenExpiration);  // Puedes usar `diffInSeconds` si prefieres el tiempo en segundos
-
-        // Verificar si el token ha expirado (si lo deseas, puedes manejarlo aquí)
-        $tokenExpirationTime = $user->tokens->first()->expires_at;  // Obtener la fecha de expiración
-        if ($tokenExpirationTime && Carbon::now()->gt($tokenExpirationTime)) {
-            return response()->json(['message' => 'Sesión expirada', 'time_elapsed' => $timeElapsed . ' minutos'], 401);
-        }
-
-        // Responder con la sesión activa y el tiempo transcurrido
-        return response()->json(['message' => 'La sesión sigue activa', 'time_elapsed' => $timeElapsed . ' minutos'], 202);
-    }
-
 
 
 
