@@ -17,10 +17,11 @@ return new class extends Migration
             $table->double('m3TRM',11,2);
             $table->double('piesTablaTP',11,2);
             $table->date('fechaFinalizacion');
+            $table->integer('identificadorP');
             $table->timestamps();
 
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
+            //$table->foreignId('product_id')->constrained('products')->onDelete('cascade');
 
         });
     }
