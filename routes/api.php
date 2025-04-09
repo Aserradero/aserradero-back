@@ -3,9 +3,11 @@
 use App\Http\Controllers\Api\EmailController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\ProductInventoryController;
+use App\Http\Controllers\Api\ProductionHistoryController;
 use App\Http\Controllers\Api\RawMaterialController;
 use App\Http\Controllers\Api\RawMaterialInventoryController;
 use App\Http\Controllers\Api\UseController;
+use App\Models\ProductionHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use PharIo\Manifest\Email;
@@ -94,6 +96,11 @@ Route::controller(RawMaterialInventoryController::class)->group(function () {
     Route::put('/rawMaterialInventory/{id}', 'update');
     Route::delete('/rawMaterialInventory/{id}', 'destroy');
 });
+
+Route::controller(ProductionHistoryController::class)->group(function () {
+    Route::post('/prductionHistory', [ProductionHistoryController::class, 'storeMultiple']);
+});
+
 
 
 
