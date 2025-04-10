@@ -260,14 +260,36 @@ class UseController extends Controller
         // Encuentra al usuario usando el correo electrónico de la URL
         $user = User::where('email', $email)->firstOrFail();  // Usamos 'where' ya que el email es único
 
+        // Validación de duplicados
+        $userWithSamePhone = User::where('telefono', $request->telefono)
+            ->where('email', '!=', $email)  // Ignora el usuario actual
+            ->first();
+
+        if ($userWithSamePhone) {
+            return response()->json(['error' => 'El teléfono ya está en uso por otro usuario. Modificarlo'], 400);
+        }
+
+        $userWithSameUsername = User::where('nombreUsuario', $request->nombreUsuario)
+            ->where('email', '!=', $email)  // Ignora el usuario actual
+            ->first();
+
+        if ($userWithSameUsername) {
+            return response()->json(['error' => 'El nombre de usuario ya está en uso por otro usuario. Modificarlo'], 400);
+        }
+
         // Actualiza los campos del usuario
         $user->name = $request->name;
         $user->apellidos = $request->apellidos;
         $user->telefono = $request->telefono;
         $user->genero = $request->genero;
         $user->nombreUsuario = $request->nombreUsuario;
-        $user->contrasena = $request->contrasena;
-        $user->password = Hash::make($request->password);
+
+        // Si se recibe una nueva contraseña, la encriptamos
+        if ($request->has('password') && !empty($request->password)) {
+            $user->password = Hash::make($request->password);
+        }
+
+        // Asignamos el rol recibido desde el formulario
         $user->assignRole($request->rol);  // Asigna el rol recibido desde el formulario
 
         // Guarda los cambios
