@@ -195,6 +195,10 @@ class UseController extends Controller
                 'user' => [
                     'id' => $user->id,
                     'name' => $user->name,
+                    'apellidos' => $user->apellidos,
+                    'telefono' => $user->telefono,
+                    'nombreUsuario' => $user->nombreUsuario,
+                    'genero' => $user->genero,
                     'email' => $user->email,
                     'role' => $user->getRoleNames()->first()
                 ],
