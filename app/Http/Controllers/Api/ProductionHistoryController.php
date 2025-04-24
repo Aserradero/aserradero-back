@@ -22,34 +22,23 @@ class ProductionHistoryController extends Controller
      */
     public function storeMultiple(Request $request)
     {
-        if (!$request->has('productionHistories') || !is_array($request->productionHistories)) {
-            return response()->json(["error" => "El formato de los datos es incorrecto. Se espera un array de materia."], 400);
-        }
+        // Puedes agregar validaciones aquí si lo deseas (opcional)
 
-        $productionH = $request->productionHistories; // Obtener el array de productos
-        $productionHG = [];
+        $nuevoProduction = new ProductionHistory();
 
-        foreach ($productionH as $production) {
-            // Crear una nueva instancia de Product
-            $nuevoProduction = new ProductionHistory();
+        $nuevoProduction->coeficiente = $request->input('coeficiente');
+        $nuevoProduction->m3TRM = $request->input('m3TRM');
+        $nuevoProduction->piesTablaTP = $request->input('piesTablaTP');
+        $nuevoProduction->fechaFinalizacion = $request->input('fechaFinalizacion');
+        $nuevoProduction->identificadorP = $request->input('identificadorP');
+        $nuevoProduction->user_id = $request->input('user_id');
 
-            // Asignar valores
-            $nuevoProduction->coeficiente = $production['coeficiente'];
-            $nuevoProduction->m3TRM = $production['m3TRM'];
-            $nuevoProduction->piesTablaTP = $production['piesTablaTP'];
-            $nuevoProduction->fechaFinalizacion = $production['fechaFinalizacion'];
-            $nuevoProduction->identificadorP = $production['identificadorP'];
-            $nuevoProduction->user_id = $production['user_id'];
+        $nuevoProduction->save();
 
-
-            // Guardar en la base de datos
-            $nuevoProduction->save();
-
-            // Agregar el producto guardado a la lista de respuesta
-            $productosHG[] = $nuevoProduction;
-        }
-
-        return response()->json(["message" => "Materiax registradas correctamente.", "materials" => $productosHG], 201);
+        return response()->json([
+            "message" => "Materia registrada correctamente.",
+            "material" => $nuevoProduction
+        ], 201);
     }
 
     /**

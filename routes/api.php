@@ -98,7 +98,7 @@ Route::controller(RawMaterialInventoryController::class)->group(function () {
 });
 
 Route::controller(ProductionHistoryController::class)->group(function () {
-    Route::post('/prductionHistory', [ProductionHistoryController::class, 'storeMultiple']);
+    Route::post('/productionHistory', [ProductionHistoryController::class, 'storeMultiple']);
 });
 
 
