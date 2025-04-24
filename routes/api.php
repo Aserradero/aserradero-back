@@ -127,6 +127,6 @@ Route::get('/verify-email/{token}', [EmailController::class, 'verifyToken']);
 
 Route::middleware(['token.expired'])->group(function () {
     Route::get('/token-user', function (Request $request) {
-        return response()->json($request->user());
+        return response()->json(['message' => 'Token válido']);
     });
 });

@@ -190,6 +190,11 @@ class UseController extends Controller
             //  Solo si no tiene token, se crea uno nuevo
             $token = $user->createToken('AuthToken')->plainTextToken;
 
+            //asignandole una fecha de expiración
+            $user->tokens()->latest()->first()->update([
+                'expires_at' => now()->addMinutes(1),
+            ]);
+
             return response()->json([
                 'message' => 'Login exitoso',
                 'user' => [

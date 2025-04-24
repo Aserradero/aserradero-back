@@ -19,46 +19,33 @@ class TokenExpirationMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Obtener el token desde el encabezado de autorización
-        $authHeader = $request->header('Authorization');
 
-        if ($authHeader) {
-            // Extraer el token del encabezado
-            $tokenId = trim(str_replace('Bearer ', '', $authHeader));
-
-            // Buscar el token en la base de datos
-            $token = PersonalAccessToken::findToken($tokenId);
-
-            if ($token) {
-                // Tiempo de expiración en minutos desde la última actividad
-                $expirationMinutes = config('sanctum.expiration'); // Puedes ajustar el tiempo
-
-                // Verificar si el token ha caducado (comparando con last_used_at o created_at)
-                $lastActivity = $token->last_used_at ?? $token->created_at;
-                if (Carbon::parse($lastActivity)->addMinutes($expirationMinutes)->isPast()) {
-                    // Eliminar el token caducado
-                    $token->delete();
-                    return response()->json(['message' => 'Token expirado, inicie sesión nuevamente'], 401);
-                }
-
-                // Actualizar el tiempo de última actividad del token
-                $token->forceFill(['last_used_at' => now()])->save();
-
-                // Autenticar al usuario manualmente
-                $user = $token->tokenable;
-                Auth::login($user);
-
-                // Dejar continuar la solicitud si el token sigue activo
-                return $next($request);
-            }
-
-            // El token no está en la base de datos
-            return response()->json(['message' => 'Token no encontrado o ya eliminado'], 401);
+        // Limpiar tokens expirados
+        $count = PersonalAccessToken::where('expires_at', '<', now())->delete();
+        if ($count > 0) {
+            Log::info("Se eliminaron $count tokens expirados.");
         }
 
-        // No se encontró el encabezado de autorización
-        return response()->json(['message' => 'No se encontró el token en la solicitud'], 401);
+        // Verificar si el token está presente en la cabecera Authorization
+        $tokenString = $request->bearerToken();
+        if (!$tokenString) {
+            return response()->json(['message' => 'Token no proporcionado.'], 401);
+        }
 
+        // Buscar el token en la base de datos
+        $token = PersonalAccessToken::findToken($tokenString);
+        if (!$token) {
+            return response()->json(['message' => 'Token inválido.'], 401);
+        }
+
+        // Validar si el token ya expiró
+        if ($token->expires_at && $token->expires_at->isPast()) {
+            $token->delete(); // Elimina el token expirado
+            return response()->json(['message' => 'Token expirado.'], 401);
+        }
+
+        // Token válido
+        return $next($request);
 
     }
 }
