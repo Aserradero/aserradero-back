@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('production_histories', function (Blueprint $table) {
             $table->id();
-            $table->double('coeficiente',11,2);
-            $table->double('m3TRM',11,2);
-            $table->double('piesTablaTP',11,2);
+            $table->double('coeficiente',16,5);
+            $table->double('m3TRM',16,5);
+            $table->double('piesTablaTP',16,5);
             $table->date('fechaFinalizacion');
             $table->integer('identificadorP');
             $table->timestamps();

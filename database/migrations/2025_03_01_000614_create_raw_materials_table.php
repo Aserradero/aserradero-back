@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('raw_materials', function (Blueprint $table) {
             $table->id();
             $table->integer('cantidad');
-            $table->double('diametroUno',11,4);
-            $table->double('diametroDos',11,4);
-            $table->double('largo',11,4);
-            $table->double('metroCR',11,4);
+            $table->double('diametroUno',16,5);
+            $table->double('diametroDos',16,5);
+            $table->double('largo',16,5);
+            $table->double('metroCR',16,5);
             $table->date('fechaRegistro');
             $table->char('calidad',20);
             $table->integer('identificadorP');
