@@ -53,6 +53,7 @@ Route::controller(RawMaterialController::class)->group(function () {
     Route::get('/rawMaterials', 'index');
     Route::post('/rawMaterials', [RawMaterialController::class, 'storeMultiple']);
     Route::put('/rawMaterial/identificadorP', [RawMaterialController::class, 'updateIdentificadorP']);
+    Route::put('/rawMaterials/{id}', 'update');
     Route::delete('/rawMaterial/{id}', 'destroy');
 });
 
