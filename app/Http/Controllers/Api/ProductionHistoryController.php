@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\ProductionHistory;
 use Illuminate\Http\Request;
 
-
 class ProductionHistoryController extends Controller
 {
     /**
@@ -14,7 +13,12 @@ class ProductionHistoryController extends Controller
      */
     public function index()
     {
-        //
+        //Obtenemos todo el historial de produccion
+        $productions = ProductionHistory::all();
+        return response()->json([
+            "message" => "Historial de produccion",
+            "productions" => $productions
+        ], 200);
     }
 
     /**

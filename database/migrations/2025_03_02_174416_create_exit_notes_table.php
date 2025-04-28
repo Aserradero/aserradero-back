@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('exit_notes', function (Blueprint $table) {
             $table->id();
-            $table->double('metroCT',11,4);
+            $table->double('metroCT',16,5);
             $table->date('fechaEmision');
             $table->char('nombreUsuario',45);
 
