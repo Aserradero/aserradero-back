@@ -13,11 +13,12 @@ return new class extends Migration
     {
         Schema::create('production_histories', function (Blueprint $table) {
             $table->id();
-            $table->double('coeficiente',16,5);
+            $table->double('coeficiente',16,5)->nullable();
             $table->double('m3TRM',16,5);
-            $table->double('piesTablaTP',16,5);
-            $table->date('fechaFinalizacion');
+            $table->double('piesTablaTP',16,5)->nullable();
+            $table->date('fechaFinalizacion')->nullable();
             $table->integer('identificadorP');
+            $table->string('estatus')->default('En espera de procesamiento');
             $table->timestamps();
 
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');

@@ -56,9 +56,30 @@ class ProductionHistoryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $identificadorP)
     {
-        //
+        // Buscar por identificadorP, no por id
+        $production = ProductionHistory::where('identificadorP', $identificadorP)->first();
+
+        if (!$production) {
+            return response()->json([
+                'message' => 'Producción no encontrada',
+            ], 404);
+        }
+
+        //atributos del historial de produccion 
+        $production->coeficiente = $request->input('coeficiente');
+        //$production->m3TRM = $request->input('m3TRM');
+        $production->piesTablaTP = $request->input('piesTablaTP');
+        $production->fechaFinalizacion = $request->input('fechaFinalizacion');
+        //$production->identificadorP = $request->input('identificadorP');
+        //$production->user_id = $request->input('user_id');
+        $production->update($request->all());
+        // Retornar respuesta JSON
+        return response()->json([
+            'message' => 'Historial de produccion actualizado correctamente',
+            'production' => $production
+        ], 200);
     }
 
     /**
@@ -67,5 +88,20 @@ class ProductionHistoryController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function updateStatus(Request $request, string $identificadorP)
+    {
+        $production = ProductionHistory::where('identificadorP', $identificadorP)->first();
+
+
+        // Actualizar el estatus
+        $production->estatus = $request->input('estatus');
+        $production->save();
+
+        return response()->json([
+            'message' => 'Estatus actualizado correctamente',
+            'production' => $production
+        ], 200);
     }
 }

@@ -100,6 +100,8 @@ Route::controller(RawMaterialInventoryController::class)->group(function () {
 Route::controller(ProductionHistoryController::class)->group(function () {
     Route::post('/productionHistory', [ProductionHistoryController::class, 'storeMultiple']);
     Route::get('/obtenerProductionHistory', 'index');
+    Route::put('/productionHistory/{id}', 'update');
+    Route::put('/productionHistoryUpdate/{id}', [ProductionHistoryController::class, 'updateStatus']);
 });
 
 
