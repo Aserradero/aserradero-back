@@ -104,4 +104,24 @@ class ProductionHistoryController extends Controller
             'production' => $production
         ], 200);
     }
+
+    public function updateDatos(Request $request, string $identificadorP)
+    {
+        $production = ProductionHistory::where('identificadorP', $identificadorP)->first();
+
+        if (!$production) {
+            return response()->json(['message' => 'Producción no encontrada'], 404);
+        }
+
+        // Actualizar el estatus
+        $production->coeficiente = $request->input('coeficiente');
+        $production->piesTablaTP = $request->input('piesTablaTP');
+        $production->fechaFinalizacion = $request->input('fechaFinalizacion');
+        $production->save();
+
+        return response()->json([
+            'message' => 'Estatus actualizado correctamente',
+            'production' => $production
+        ], 200);
+    }
 }
