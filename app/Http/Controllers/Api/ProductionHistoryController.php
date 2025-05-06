@@ -3,8 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Product;
 use App\Models\ProductionHistory;
+use App\Models\RawMaterial;
 use Illuminate\Http\Request;
+
+
 
 class ProductionHistoryController extends Controller
 {
@@ -105,23 +109,42 @@ class ProductionHistoryController extends Controller
         ], 200);
     }
 
-    public function updateDatos(Request $request, string $identificadorP)
+    public function updateDatos(Request $request)
     {
-        $production = ProductionHistory::where('identificadorP', $identificadorP)->first();
-
-        if (!$production) {
-            return response()->json(['message' => 'Producción no encontrada'], 404);
+        // Verificar que la solicitud contenga el array 'productos'
+        if (!$request->has('productos') || !is_array($request->productos)) {
+            return response()->json(["error" => "El formato de los datos es incorrecto. Se espera un array de productos."], 400);
         }
 
-        // Actualizar el estatus
-        $production->coeficiente = $request->input('coeficiente');
-        $production->piesTablaTP = $request->input('piesTablaTP');
-        $production->fechaFinalizacion = $request->input('fechaFinalizacion');
-        $production->save();
+        $productos = $request->productos; // Obtener el array de productos
+
+        //obtener al producto 
+        foreach ($productos as $producto) {
+            $identificadorP = $producto['identificadorP'];
+            //buscar a la produccion que pertenece el producto
+            $production = ProductionHistory::where('identificadorP', $identificadorP)->first();
+            if (!$production) {
+                return response()->json(['message' => 'Producción no encontrada'], 404);
+            }
+            $guardarCoeficiente = ($producto['piesTabla'] * 0.236) / $production['m3TRM'] / 100;
+            $guardarPiesTablaTP = $producto['piesTabla'];
+
+            $sumaPiesTalabTP = $production->piesTablaTP + $guardarPiesTablaTP;
+            $sumaCoeficiente = $production->coeficiente + $guardarCoeficiente;
+
+            // Actualizar el estatus
+            $production->coeficiente = $sumaCoeficiente;
+            $production->piesTablaTP = $sumaPiesTalabTP;
+            $production->save();
+            $produccionesActualizadas[] = $production;
+
+
+        }
+
 
         return response()->json([
             'message' => 'Estatus actualizado correctamente',
-            'production' => $production
+            'production' => $produccionesActualizadas
         ], 200);
     }
 }

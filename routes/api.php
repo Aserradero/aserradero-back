@@ -103,7 +103,7 @@ Route::controller(ProductionHistoryController::class)->group(function () {
     Route::get('/obtenerProductionHistory', 'index');
     Route::put('/productionHistory/{id}', 'update');
     Route::put('/productionHistoryUpdate/{id}', [ProductionHistoryController::class, 'updateStatus']);
-    Route::put('/productionHistoryDatos/{id}', [ProductionHistoryController::class, 'updateDatos']);
+    Route::put('/productionHistoryDatos', [ProductionHistoryController::class, 'updateDatos']);
 });
 
 
