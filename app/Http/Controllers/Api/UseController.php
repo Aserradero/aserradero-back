@@ -191,9 +191,11 @@ class UseController extends Controller
             $token = $user->createToken('AuthToken')->plainTextToken;
 
             //asignandole una fecha de expiración
+            /*Tiempo de vida de token desactivado, activarlo cuando actives esta opcion
             $user->tokens()->latest()->first()->update([
                 'expires_at' => now()->addMinutes(1),
             ]);
+            */
 
             return response()->json([
                 'message' => 'Login exitoso',
