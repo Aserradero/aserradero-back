@@ -21,7 +21,7 @@ return new class extends Migration
             $table->double('largo', 16, 5);
             $table->double('piesTabla', 16, 5);
             $table->date('fechaRegistro');
-            $table->integer('identificadorP');
+            $table->integer('identificadorP')->unique();
             $table->timestamps();
 
 

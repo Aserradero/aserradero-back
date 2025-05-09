@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\RawMaterial; 
+use App\Models\RawMaterial;
 use Illuminate\Http\Request;
 use Psy\Readline\Hoa\Console;
 use Termwind\Components\Raw;
+use Illuminate\Support\Facades\DB;
+
 
 
 use function Laravel\Prompts\error;
@@ -28,37 +30,49 @@ class RawMaterialController extends Controller
      */
     public function storeMultiple(Request $request)
     {
-        // Verificar que la solicitud contenga el array 'productos'
-    if (!$request->has('materials') || !is_array($request->materials)) {
-        return response()->json(["error" => "El formato de los datos es incorrecto. Se espera un array de materias."], 400);
-    }
+        if (!$request->has('materials') || !is_array($request->materials)) {
+            return response()->json(["error" => "El formato de los datos es incorrecto. Se espera un array de materias."], 400);
+        }
 
-    $productos = $request->materials; // Obtener el array de productos
-    $productosGuardados = [];
+        $productos = $request->materials;
+        $productosGuardados = [];
 
-    foreach ($productos as $producto) {
-        // Crear una nueva instancia de Product
-        $nuevoProducto = new RawMaterial(); 
+        foreach ($productos as $index => $producto) {
+            $identificador = $producto['identificadorP'] ?? null;
 
-        // Asignar valores
-        $nuevoProducto->cantidad = $producto['cantidad'];
-        $nuevoProducto->diametroUno = $producto['diametroUno'];
-        $nuevoProducto->diametroDos = $producto['diametroDos'];
-        $nuevoProducto->largo = $producto['largo'];
-        $nuevoProducto->metroCR = $producto['metroCR'];
-        $nuevoProducto->fechaRegistro = $producto['fechaRegistro'];
-        $nuevoProducto->calidad = $producto['calidad'];
-        $nuevoProducto->identificadorP = $producto['identificadorP'];
+            // Validar que identificadorP no se repita en la base de datos si es diferente de 0
+            if ($identificador !== null && $identificador != 0) {
+                $existe = DB::table('raw_materials')
+                    ->where('identificadorP', $identificador)
+                    ->exists();
 
-        // Guardar en la base de datos
-        $nuevoProducto->save();
+                if ($existe) {
+                    return response()->json([
+                        "error" => "El identificadorP '{$identificador}' ya existe y no puede repetirse.",
+                        "index" => $index,
+                    ], 422);
+                }
+            }
 
-        // Agregar el producto guardado a la lista de respuesta
-        $productosGuardados[] = $nuevoProducto;
-    }
+            // Crear y guardar la materia prima
+            $nuevoProducto = new RawMaterial();
+            $nuevoProducto->cantidad = $producto['cantidad'];
+            $nuevoProducto->diametroUno = $producto['diametroUno'];
+            $nuevoProducto->diametroDos = $producto['diametroDos'];
+            $nuevoProducto->largo = $producto['largo'];
+            $nuevoProducto->metroCR = $producto['metroCR'];
+            $nuevoProducto->fechaRegistro = $producto['fechaRegistro'];
+            $nuevoProducto->calidad = $producto['calidad'];
+            $nuevoProducto->identificadorP = $identificador;
+            $nuevoProducto->save();
 
-    return response()->json(["message" => "Productos registrados correctamente.", "materials" => $productosGuardados], 201);
+            $productosGuardados[] = $nuevoProducto;
+        }
 
+        return response()->json([
+            "message" => "Materias primas registradas correctamente.",
+            "materials" => $productosGuardados,
+        ], 201);
     }
 
     /**
@@ -119,8 +133,9 @@ class RawMaterialController extends Controller
 
             if ($exists) {
                 RawMaterial::where('id', $materiaP['id'])
-                    ->update(['identificadorP' => $materiaP['identificadorP'],
-                    'updated_at' => $materiaP['updated_at'] ?? now() // Actualiza la fecha a la fecha actual
+                    ->update([
+                        'identificadorP' => $materiaP['identificadorP'],
+                        'updated_at' => $materiaP['updated_at'] ?? now() // Actualiza la fecha a la fecha actual
                     ]);
                 $totalActualizados++;
             } else {
@@ -133,5 +148,5 @@ class RawMaterialController extends Controller
             'total_actualizados' => $totalActualizados,
             'ids_no_encontrados' => $idsNoEncontrados
         ], 200);
-    } 
+    }
 }
