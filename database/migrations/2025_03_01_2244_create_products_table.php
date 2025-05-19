@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -22,13 +21,15 @@ return new class extends Migration
             $table->double('piesTabla', 16, 5);
             $table->date('fechaRegistro');
             $table->integer('identificadorP');
+            //crear una llave foranea
+            $table->foreignId('idCatalogProduct')->constrained('catalog_products')->onDelete('cascade');
             $table->timestamps();
 
 
             //llave foranea nombre de la llave forenea-> referencia a la tabla y en automatico toma el id
-            
 
-    
+
+
         });
     }
 

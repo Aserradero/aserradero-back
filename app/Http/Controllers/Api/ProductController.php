@@ -46,6 +46,7 @@ class ProductController extends Controller
         $nuevoProducto->piesTabla = $producto['piesTabla'];
         $nuevoProducto->fechaRegistro = $producto['fechaRegistro'];
         $nuevoProducto->identificadorP = $producto['identificadorP'];
+        $nuevoProducto->idCatalogProduct=$producto['idCatalogProduct'];
 
         // Guardar en la base de datos
         $nuevoProducto->save();

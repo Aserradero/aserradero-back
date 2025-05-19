@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\CatalogProductController;
 use App\Http\Controllers\Api\EmailController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\ProductInventoryController;
@@ -104,6 +105,12 @@ Route::controller(ProductionHistoryController::class)->group(function () {
     Route::put('/productionHistory/{id}', 'update');
     Route::put('/productionHistoryUpdate/{id}', [ProductionHistoryController::class, 'updateStatus']);
     Route::put('/productionHistoryDatos', [ProductionHistoryController::class, 'updateDatos']);
+});
+
+//Rutas para el catalogo de productos
+Route::controller(CatalogProductController::class)->group(function () {
+    Route::get('/catalogProduct', 'index');
+
 });
 
 
