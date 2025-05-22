@@ -16,7 +16,7 @@ return new class extends Migration
             $table->double('coeficiente',16,5)->nullable();
             $table->double('m3TRM',16,5);
             $table->double('piesTablaTP',16,5)->nullable();
-            $table->date('fechaFinalizacion')->nullable();
+            $table->timestamp('fechaFinalizacion')->nullable();
             $table->integer('identificadorP')->unique();
             $table->string('estatus')->default('En espera de procesamiento');
             $table->timestamps();
