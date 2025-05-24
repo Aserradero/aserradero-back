@@ -20,7 +20,9 @@ return new class extends Migration {
             $table->double('largo', 16, 5);
             $table->double('piesTabla', 16, 5);
             $table->date('fechaRegistro');
-            $table->integer('identificadorP');
+            $table->foreignId(column: 'identificadorP')->nullable()->constrained('production_histories');
+
+            //$table->integer('identificadorP');
             //crear una llave foranea
             $table->foreignId('idCatalogProduct')->constrained('catalog_products')->onDelete('cascade');
             $table->timestamps();
