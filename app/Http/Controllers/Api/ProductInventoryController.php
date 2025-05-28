@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Product;
 use App\Models\ProductInventory;
+use App\Models\ProductionHistory;
 use Illuminate\Http\Request;
 
 class ProductInventoryController extends Controller
@@ -96,5 +98,64 @@ class ProductInventoryController extends Controller
     {
         $productInventorys = ProductInventory::destroy($id);
         return $productInventorys;
+    }
+
+    public function eliminarProductoCantidad(Request $request, string $id)
+    {
+        $request->validate([
+            'cantidad' => 'required|integer|min:1'
+        ]);
+
+        $cantidadARestar = $request->cantidad;
+        $productInventory = ProductInventory::findOrFail($id);
+        $idProducto = $productInventory->idProducto;
+        $producto = Product::findOrFail($idProducto);
+        $identificadorP = $producto['identificadorP'];
+        $production = ProductionHistory::where('identificadorP', $identificadorP)->firstOrFail();
+
+        if ($producto->cantidad < $cantidadARestar) {
+            return response()->json([
+                'message' => 'No hay suficiente cantidad disponible para restar',
+                'cantidadDisponible' => $producto->cantidad
+            ], 400);
+        }
+
+        // Actualizar el producto
+        $producto->cantidad -= $cantidadARestar;
+        $producto->piesTabla = ($producto['ancho'] * $producto['largo'] * $producto['grosor'] * $producto['cantidad']) / 12;
+        $producto->save();
+
+        // Obtener TODOS los productos con el mismo identificadorP
+        $productosRelacionados = Product::where('identificadorP', $identificadorP)->get();
+
+        // Calcular el nuevo piesTablaTP para la producción
+        $totalPiesTablaTP = 0;
+        foreach ($productosRelacionados as $prod) {
+            $totalPiesTablaTP += ($prod->ancho * $prod->largo * $prod->grosor * $prod->cantidad) / 12;
+        }
+
+        // Actualizar la producción
+        $production->piesTablaTP = $totalPiesTablaTP;
+        $production->coeficiente = ($production->piesTablaTP * 0.236) / $production->m3TRM / 100; // Actualizar el coeficiente
+        $production->save();
+
+        // Eliminar si la cantidad llega a 0
+        if ($producto->cantidad == 0) {
+            $productInventory->delete();
+            $producto->delete();
+
+            return response()->json([
+                'message' => 'Producto eliminado correctamente porque la cantidad llegó a 0',
+                'cantidadDisponible' => 0,
+                'eliminado' => true,
+                'production_updated' => $production // Devuelve los datos actualizados de producción
+            ], 200);
+        }
+
+        return response()->json([
+            'message' => 'Cantidad actualizada correctamente',
+            'cantidadRestante' => $producto->cantidad,
+            'production_updated' => $production // Devuelve los datos actualizados de producción
+        ], 200);
     }
 }

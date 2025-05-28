@@ -89,6 +89,7 @@ Route::controller(ProductInventoryController::class)->group(function () {
     Route::get('/productInventory/{id}', 'show');
     Route::put('/productInventory/{id}', 'update');
     Route::delete('/productInventory/{id}', 'destroy');
+    Route::patch('/productInventoryCantidad/{id}', [ProductInventoryController::class, 'eliminarProductoCantidad']);
 });
 
 Route::controller(RawMaterialInventoryController::class)->group(function () {
