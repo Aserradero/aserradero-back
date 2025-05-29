@@ -91,6 +91,35 @@ class ProductInventoryController extends Controller
         ], 200);
     }
 
+    public function updatePrecioStock(Request $request)
+{
+    // Validar los campos requeridos
+    $request->validate([
+        'precioUnitario' => 'required|numeric',
+        'stockIdealPT' => 'required|numeric',
+    ]);
+
+    // Buscar productos que coincidan con las características
+    $productos = ProductInventory::whereHas('product', function ($query) use ($request) {
+        $query->where('calidad', $request->calidad)
+              ->where('grosor', $request->grosor)
+              ->where('ancho', $request->ancho)
+              ->where('largo', $request->largo);
+    })->get();
+
+    // Actualizar cada producto
+    foreach ($productos as $producto) {
+        $producto->precioUnitario = $request->precioUnitario;
+        $producto->stockIdealPT = $request->stockIdealPT;
+        $producto->save();
+    }
+
+    return response()->json([
+        'message' => 'Productos actualizados correctamente',
+        'cantidad' => count($productos)
+    ], 200);
+}
+
     /**
      * Remove the specified resource from storage.
      */
