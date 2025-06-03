@@ -16,7 +16,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('idMateria');
             $table->integer('stockIdeal');
-            $table->foreignId('idUsuario')->constrained('users')->onDelete('cascade');            
+            $table->foreignId('idUsuario')->nullable()->constrained('users')->onDelete('set null');            
             $table->foreign('idMateria')->references('id')->on('raw_materials')->onDelete('cascade');
             $table->timestamps();
     });

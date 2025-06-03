@@ -28,7 +28,7 @@ return new class extends Migration
 
             //llaves foraneas
             $table->foreignId('sale_id')->constrained('sales')->onDelete('cascade');
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');
         });
     }
 

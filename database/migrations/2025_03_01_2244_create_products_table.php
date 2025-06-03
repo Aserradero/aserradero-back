@@ -24,7 +24,7 @@ return new class extends Migration {
 
             //$table->integer('identificadorP');
             //crear una llave foranea
-            $table->foreignId('idCatalogProduct')->constrained('catalog_products')->onDelete('cascade');
+            $table->foreignId('idCatalogProduct')->constrained('catalog_products')->onDelete('restrict');
             $table->timestamps();
 
 
