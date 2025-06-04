@@ -15,7 +15,8 @@ class CatalogProduct extends Model
         'largo',
         'tipoProducto',
         'codigoProducto',
-        'precioUnitario'
+        'precioUnitario',
+        'image'
         // Agrega aquí todos los campos que permitirás asignar masivamente
     ];
 }

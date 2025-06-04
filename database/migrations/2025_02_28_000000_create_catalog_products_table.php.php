@@ -18,6 +18,7 @@ return new class extends Migration {
             $table->double('precioUnitario', 16, 5);
             $table->string('tipoProducto');
             $table->string('codigoProducto');
+            $table->string('image', 255)->nullable();
             $table->timestamps();
         });
     }
