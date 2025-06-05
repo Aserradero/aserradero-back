@@ -170,6 +170,16 @@ class CatalogProductController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $hasProducts = Product::where('idCatalogProduct', $id)->exists();
+
+        if ($hasProducts) {
+            return response()->json([
+                'message' => 'No se puede eliminar, hay productos que usan este catálogo.'
+            ], 400);
+        }
+
+        CatalogProduct::destroy($id);
+        return response()->json(['message' => 'Catálogo eliminado.']);
+
     }
 }
