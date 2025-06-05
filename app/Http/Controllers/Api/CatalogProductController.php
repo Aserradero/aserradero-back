@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\CatalogProduct;
+use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 
 
@@ -25,6 +27,7 @@ class CatalogProductController extends Controller
      */
     public function store(Request $request)
     {
+        \Log::debug('Datos recibidos:', $request->all());
         $request->validate([
             'grosor' => 'required|numeric',
             'ancho' => 'required|numeric',
@@ -45,7 +48,7 @@ class CatalogProductController extends Controller
             $atributos['image'] = 'productos/' . $imageName; // Guarda la ruta para la base de datos
         } else {
             // Si no hay imagen, puedes asignar null o dejarlo así
-            $atributos['image'] = "productos/1748986073_th.jpeg";
+            $atributos['image'] = "productos/default.jpeg";
         }
 
         if ($productoMismoTipo) {
@@ -97,8 +100,70 @@ class CatalogProductController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        \Log::debug('Datos recibidos', $request->all());
+        \Log::debug('Archivo recibido en update', [$request->file('image')]);
+
+        // Validación general
+        $request->validate([
+            'grosor' => 'required|numeric',
+            'ancho' => 'required|numeric',
+            'largo' => 'required|numeric',
+            'tipoProducto' => 'required|string',
+            'codigoProducto' => 'required|string',
+            'precioUnitario' => 'required|numeric',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        $catalogProduct = CatalogProduct::findOrFail($id);
+        $estaEnUso = Product::where('idCatalogProduct', $id)->exists();
+
+        // Si está en uso, solo permitimos actualizar la imagen
+        if ($estaEnUso) {
+            if ($request->hasFile('image')) {
+                if ($catalogProduct->image && $catalogProduct->image !== 'productos/default.jpeg') {
+                    \Storage::delete('public/' . $catalogProduct->image);
+                }
+
+                $image = $request->file('image');
+                $imageName = time() . '_' . $image->getClientOriginalName();
+                $image->storeAs('public/productos', $imageName);
+                $catalogProduct->image = 'productos/' . $imageName;
+                $catalogProduct->save();
+
+                return response()->json([
+                    'message' => 'Imagen actualizada correctamente (producto ya en uso)',
+                    'product' => $catalogProduct,
+                ], 200);
+            } else {
+                return response()->json([
+                    'message' => 'Este catálogo ya está en uso. Solo se puede actualizar la imagen.',
+                ], 400);
+            }
+        }
+
+        // Si no está en uso, actualiza todo normalmente
+        $updateData = $request->except('image');
+
+        if ($request->hasFile('image')) {
+            if ($catalogProduct->image && $catalogProduct->image !== 'productos/default.jpeg') {
+                \Storage::delete('public/' . $catalogProduct->image);
+            }
+
+            $image = $request->file('image');
+            $imageName = time() . '_' . $image->getClientOriginalName();
+            $image->storeAs('public/productos', $imageName);
+            $updateData['image'] = 'productos/' . $imageName;
+        }
+
+        $catalogProduct->update($updateData);
+
+        return response()->json([
+            'message' => 'Producto actualizado correctamente',
+            'product' => $catalogProduct
+        ], 200);
     }
+
+
 
     /**
      * Remove the specified resource from storage.
