@@ -150,7 +150,7 @@ Route::middleware(['token.expired'])->group(function () {
 
 // routes/web.php o routes/api.php
 Route::get('/archivo-publico/{filename}', function ($filename) {
-    $path = storage_path('app/public/productos/' . $filename);
+    $path = public_path('storage/productos/' . $filename); // <- usamos 'public_path'
 
     if (!\File::exists($path)) {
         abort(404);
