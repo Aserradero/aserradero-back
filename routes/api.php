@@ -146,3 +146,15 @@ Route::middleware(['token.expired'])->group(function () {
         return response()->json(['message' => 'Token válido']);
     });
 });
+
+
+// Api para obtener los archivos ppublicos
+Route::get('/archivo-publico/{path}', function ($path) {
+    $file = public_path('storage/' . $path);
+
+    if (!\File::exists($file)) {
+        abort(404);
+    }
+
+    return response()->file($file);
+})->where('path', '.*');
