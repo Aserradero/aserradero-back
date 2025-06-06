@@ -112,8 +112,10 @@ Route::controller(ProductionHistoryController::class)->group(function () {
 //Rutas para el catalogo de productos
 Route::controller(CatalogProductController::class)->group(function () {
     Route::get('/catalogProduct', 'index');
-    Route::post('/catalogProduct','store');
-    
+    Route::post('/catalogProduct', 'store');
+    Route::put('/catalogProduct/{id}', action: [CatalogProductController::class, 'update']);
+    Route::delete('/catalogProduct/{id}',[CatalogProductController::class,'destroy']);
+
 
 });
 
