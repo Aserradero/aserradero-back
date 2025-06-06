@@ -45,7 +45,7 @@ class CatalogProductController extends Controller
             $atributos['image'] = 'productos/' . $imageName; // Guarda la ruta para la base de datos
         } else {
             // Si no hay imagen, puedes asignar null o dejarlo así
-            $atributos['image'] = "productos/1748986073_th.jpeg";
+            $atributos['image'] = "productos/1748986073_th.jpg";
         }
 
         if ($productoMismoTipo) {

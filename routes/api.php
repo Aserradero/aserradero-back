@@ -118,8 +118,6 @@ Route::controller(CatalogProductController::class)->group(function () {
 });
 
 
-
-
 //Controlador para enviar un correo electronico
 Route::post('/email', [EmailController::class, 'enviarCorreo']);
 
