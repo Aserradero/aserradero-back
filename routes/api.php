@@ -148,13 +148,13 @@ Route::middleware(['token.expired'])->group(function () {
 });
 
 
-// routes/web.php o routes/api.php
-Route::get('/archivo-publico/{filename}', function ($filename) {
-    $path = public_path('storage/productos/' . $filename); // <- usamos 'public_path'
+// Api para obtener los archivos ppublicos
+Route::get('/archivo-publico/{path}', function ($path) {
+    $file = public_path('storage/' . $path);
 
-    if (!\File::exists($path)) {
+    if (!\File::exists($file)) {
         abort(404);
     }
 
-    return response()->file($path);
-});
+    return response()->file($file);
+})->where('path', '.*');
