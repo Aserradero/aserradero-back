@@ -60,11 +60,7 @@ class UseController extends Controller
         $user->apellidos = $request->apellidos;
         $user->telefono = $request->telefono;
         $user->genero = $request->genero;
-        $user->rol = $request->rol;
         $user->nombreUsuario = $request->nombreUsuario;
-        $user->contrasena = $request->contrasena;
-        $user->email = $request->email;
-        $user->password = $request->password;
 
         $user->save();
         return $user;
