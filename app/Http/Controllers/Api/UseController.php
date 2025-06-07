@@ -61,9 +61,25 @@ class UseController extends Controller
         $user->telefono = $request->telefono;
         $user->genero = $request->genero;
         $user->nombreUsuario = $request->nombreUsuario;
+       
+        $updateData = $request->except('image');
 
-        $user->save();
-        return $user;
+        if ($request->hasFile('image')) {
+            if ($user->image && $user->image !== 'usuarios/usuario.jpg') {
+                \Storage::delete('public/' . $user->image);
+            }
+
+            $image = $request->file('image');
+            $imageName = time() . '_' . $image->getClientOriginalName();
+            $image->storeAs('public/usuarios', $imageName);
+            $updateData['image'] = 'usuarios/' . $imageName;
+        }
+
+        $user->update($updateData);
+         return response()->json([
+            'message' => 'Usuario actualizado correctamente',
+            'user' => $user
+        ], 200);
     }
 
     public function updatePassword(Request $request)

@@ -113,7 +113,7 @@ class CatalogProductController extends Controller
             'precioUnitario' => 'required|numeric',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
-
+ 
         $catalogProduct = CatalogProduct::findOrFail($id);
         $estaEnUso = Product::where('idCatalogProduct', $id)->exists();
 

@@ -20,6 +20,7 @@ return new class extends Migration
             $table->char('nombreUsuario',25)->nullable()->unique(); //esto cambie a que sea unico
             $table->string('contrasena')->nullable();
             $table->string('email')->unique();
+            $table->string('image')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable();
             $table->rememberToken()->nullable();
