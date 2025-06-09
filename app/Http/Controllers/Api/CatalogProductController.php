@@ -34,7 +34,7 @@ class CatalogProductController extends Controller
             'largo' => 'required|numeric',
             'tipoProducto' => 'required',
             'precioUnitario' => 'required|numeric',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240'
         ]);
 
         $atributos = $request->only(['grosor', 'ancho', 'largo', 'tipoProducto', 'precioUnitario']);
@@ -111,7 +111,7 @@ class CatalogProductController extends Controller
             'tipoProducto' => 'required|string',
             'codigoProducto' => 'required|string',
             'precioUnitario' => 'required|numeric',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240',
         ]);
  
         $catalogProduct = CatalogProduct::findOrFail($id);
