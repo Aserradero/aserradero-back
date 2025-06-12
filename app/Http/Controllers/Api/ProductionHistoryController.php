@@ -135,7 +135,7 @@ class ProductionHistoryController extends Controller
             // Actualizar el estatus
             $production->coeficiente = $sumaCoeficiente;
             $production->piesTablaTP = $sumaPiesTalabTP;
-            $production->fechaFinalizacion = now();
+            //$production->fechaFinalizacion = now();
             $production->save();
             $produccionesActualizadas[] = $production;
 
