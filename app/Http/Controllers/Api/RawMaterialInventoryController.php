@@ -75,7 +75,7 @@ class RawMaterialInventoryController extends Controller
 
         //atributos de la materias prima
         $rawMaterialInventory->stockIdeal = $request->stockIdeal;
-
+ 
         $rawMaterialInventory->save();
         // Retornar respuesta JSON
         return response()->json([

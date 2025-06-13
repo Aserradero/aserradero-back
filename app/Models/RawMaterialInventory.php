@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class RawMaterialInventory extends Model
 {
-    use HasFactory;
+    use HasFactory; 
     protected $fillable = [
         'stockIdeal',
         'idUsuario'
