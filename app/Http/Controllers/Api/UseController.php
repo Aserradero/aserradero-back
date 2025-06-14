@@ -109,15 +109,8 @@ class UseController extends Controller
      */
     public function destroy(string $id)
     {
-        if (auth()->id() == $id) {
-        return response()->json([
-            'message' => 'No puedes eliminar tu propia cuenta mientras estás autenticado.'
-        ], 403); // Código 403 = Prohibido
-    }
-        $user = User::find($id);
-        $user->delete();
-        return response()->json([
-            'message' => 'Usuario eliminado correctamente.'], 200);
+        $user = User::destroy(ids: $id);
+        return $user;
     }
 
 

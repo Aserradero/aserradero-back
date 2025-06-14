@@ -79,7 +79,7 @@ class ProductInventoryController extends Controller
         // Buscar el producto por ID
         $productInventory = ProductInventory::findOrFail($id);
 
-        //atributos de la materias prima 
+        //atributos de la materias prima
         $productInventory->precioUnitario = $request->precioUnitario;
         $productInventory->stockIdealPT = $request->stockIdealPT;
 

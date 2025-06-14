@@ -126,7 +126,7 @@ class ProductionHistoryController extends Controller
             if (!$production) {
                 return response()->json(['message' => 'Producción no encontrada'], 404);
             }
-            $guardarCoeficiente = ($producto['piesTabla'] * 0.236) / ($production['m3TRM'] / 100);
+            $guardarCoeficiente = ($producto['piesTabla'] * 0.236) / $production['m3TRM'] / 100;
             $guardarPiesTablaTP = $producto['piesTabla'];
 
             $sumaPiesTalabTP = $production->piesTablaTP + $guardarPiesTablaTP;
