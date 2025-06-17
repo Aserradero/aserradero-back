@@ -26,7 +26,7 @@ class UserSeeder extends Seeder
             'email' => 'juan@example.com',
             'email_verified_at' => now(),
             'password' => Hash::make('12345678'),
-            "image"=>"usuarios/usuario.jpg",
+            "image" => "usuarios/usuario.jpg",
             'remember_token' => \Str::random(10),
             'created_at' => now(),
             'updated_at' => now(),
@@ -45,7 +45,48 @@ class UserSeeder extends Seeder
             'email' => 'luis@example.com',
             'email_verified_at' => now(),
             'password' => Hash::make('12345678'),
-            "image"=>"usuarios/usuario.jpg",
+            "image" => "usuarios/usuario.jpg",
+            'remember_token' => \Str::random(10),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+        // Asignar rol
+        $usuariod->assignRole('jefepatio'); // O 'jefepatio'
+
+
+
+
+        $usuario = User::create([
+            'name' => 'saul',
+            'apellidos' => 'Pérez Gómez',
+            'telefono' => '6621234590',
+            'genero' => 'M',
+            'nombreUsuario' => 'saul34',
+            'contrasena' => Hash::make('contrasena123'), // opcional
+            'email' => 'saul@example.com',
+            'email_verified_at' => now(),
+            'password' => Hash::make('12345678'),
+            "image" => "usuarios/usuario.jpg",
+            'remember_token' => \Str::random(10),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        // Asignar rol
+        $usuario->assignRole('admin'); // O 'jefepatio'
+
+
+        $usuariod = User::create([
+            'name' => 'saul dos',
+            'apellidos' => 'Pérez Gómez',
+            'telefono' => '6621234589',
+            'genero' => 'M',
+            'nombreUsuario' => 'saul5466',
+            'contrasena' => Hash::make('contrasena123'), // opcional
+            'email' => 'sauldos@example.com',
+            'email_verified_at' => now(),
+            'password' => Hash::make('12345678'),
+            "image" => "usuarios/usuario.jpg",
             'remember_token' => \Str::random(10),
             'created_at' => now(),
             'updated_at' => now(),
