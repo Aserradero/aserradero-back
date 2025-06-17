@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
 
-
+            $table->double('cantidad',16,5);
             $table->foreignId('producto_id')->constrained('products')->onDelete('cascade');
             $table->foreignId('sale_id')->constrained('sales')->onDelete('cascade');
             

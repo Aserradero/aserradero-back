@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('idProducto');
             $table->double('precioUnitario',16,5);
             $table->double('stockIdealPT',16,5);
+            $table->double('stockActual',16,5);
             $table->foreignId('idUsuario')->nullable()->constrained('users')->onDelete('set null');
             $table->foreign('idProducto')->references('id')->on('products')->onDelete('cascade');
             $table->timestamps();          

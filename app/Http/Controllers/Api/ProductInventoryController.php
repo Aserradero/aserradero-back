@@ -26,34 +26,57 @@ class ProductInventoryController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+
     public function storeMultiple(Request $request)
     {
         if (!$request->has('productos') || !is_array($request->productos)) {
-            return response()->json(["error" => "El formato de los datos es incorrecto. Se espera un array de productos."], 400);
+            return response()->json([
+                "error" => "El formato de los datos es incorrecto. Se espera un array de productos."
+            ], 400);
         }
 
-        $productInventorys = $request->productos; // Obtener el array de productos
+        $productosAGuardar = $request->productos;
         $productosGuardados = [];
 
-        foreach ($productInventorys as $producto) {
-            // Crear una nueva instancia de Product
-            $nuevoProducto = new ProductInventory();
+        foreach ($productosAGuardar as $producto) {
+            // Obtener el producto actual desde base de datos (para acceder a idCatalogProduct)
+            $productoBD = Product::find($producto['idProducto']);
 
-            // Asignar valores
-            $nuevoProducto->idProducto = $producto['idProducto'];
-            $nuevoProducto->precioUnitario = $producto['precioUnitario'];
-            $nuevoProducto->stockIdealPT = $producto['stockIdealPT'];
-            $nuevoProducto->idUsuario = $producto['idUsuario'];
-            // Guardar en la base de datos
-            $nuevoProducto->save();
+            if (!$productoBD) {
+                return response()->json([
+                    "error" => "Producto con ID {$producto['idProducto']} no encontrado."
+                ], 404);
+            }
 
-            // Agregar el producto guardado a la lista de respuesta
-            $productosGuardados[] = $nuevoProducto;
+            // Obtener el catálogo asociado
+            $idCatalogProduct = $productoBD->idCatalogProduct;
+
+            // Buscar si ya hay otro inventario de producto con el mismo catálogo
+            $inventarioRelacionado = ProductInventory::whereHas('product', function ($query) use ($idCatalogProduct) {
+                $query->where('idCatalogProduct', $idCatalogProduct);
+            })->first();
+
+            // Crear nuevo inventario
+            $nuevoInventario = new ProductInventory();
+            $nuevoInventario->idProducto = $producto['idProducto'];
+            $nuevoInventario->precioUnitario = $producto['precioUnitario'];
+
+            $nuevoInventario->stockIdealPT = $inventarioRelacionado
+                ? $inventarioRelacionado->stockIdealPT
+                : $producto['stockIdealPT'];
+
+            $nuevoInventario->stockActual = $producto['stockActual'];
+            $nuevoInventario->idUsuario = $producto['idUsuario'];
+            $nuevoInventario->save();
+
+            $productosGuardados[] = $nuevoInventario;
         }
 
-        return response()->json(["message" => "Productos registrados correctamente.", "productos" => $productosGuardados], 201);
+        return response()->json([
+            "message" => "Productos registrados correctamente.",
+            "productos" => $productosGuardados
+        ], 201);
     }
-
     /**
      * Display the specified resource.
      */
@@ -92,33 +115,33 @@ class ProductInventoryController extends Controller
     }
 
     public function updatePrecioStock(Request $request)
-{
-    // Validar los campos requeridos
-    $request->validate([
-        'precioUnitario' => 'required|numeric',
-        'stockIdealPT' => 'required|numeric',
-    ]);
+    {
+        // Validar los campos requeridos
+        $request->validate([
+            'precioUnitario' => 'required|numeric',
+            'stockIdealPT' => 'required|numeric',
+        ]);
 
-    // Buscar productos que coincidan con las características
-    $productos = ProductInventory::whereHas('product', function ($query) use ($request) {
-        $query->where('calidad', $request->calidad)
-              ->where('grosor', $request->grosor)
-              ->where('ancho', $request->ancho)
-              ->where('largo', $request->largo);
-    })->get();
+        // Buscar productos que coincidan con las características
+        $productos = ProductInventory::whereHas('product', function ($query) use ($request) {
+            $query->where('calidad', $request->calidad)
+                ->where('grosor', $request->grosor)
+                ->where('ancho', $request->ancho)
+                ->where('largo', $request->largo);
+        })->get();
 
-    // Actualizar cada producto
-    foreach ($productos as $producto) {
-        $producto->precioUnitario = $request->precioUnitario;
-        $producto->stockIdealPT = $request->stockIdealPT;
-        $producto->save();
+        // Actualizar cada producto
+        foreach ($productos as $producto) {
+            $producto->precioUnitario = $request->precioUnitario;
+            $producto->stockIdealPT = $request->stockIdealPT;
+            $producto->save();
+        }
+
+        return response()->json([
+            'message' => 'Productos actualizados correctamente',
+            'cantidad' => count($productos)
+        ], 200);
     }
-
-    return response()->json([
-        'message' => 'Productos actualizados correctamente',
-        'cantidad' => count($productos)
-    ], 200);
-}
 
     /**
      * Remove the specified resource from storage.
@@ -142,12 +165,18 @@ class ProductInventoryController extends Controller
         $identificadorP = $producto['identificadorP'];
         $production = ProductionHistory::where('identificadorP', $identificadorP)->firstOrFail();
 
+
+
         if ($producto->cantidad < $cantidadARestar) {
             return response()->json([
                 'message' => 'No hay suficiente cantidad disponible para restar',
                 'cantidadDisponible' => $producto->cantidad
             ], 400);
         }
+
+        //actualizar el StockIdeal del inventario de productos
+        $productInventory->stockActual -= $cantidadARestar;
+        $productInventory->save();
 
         // Actualizar el producto
         $producto->cantidad -= $cantidadARestar;
