@@ -36,7 +36,7 @@ class CatalogProductController extends Controller
             'precioUnitario' => 'required|numeric',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:25600'
         ]);
-
+ 
         $atributos = $request->only(['grosor', 'ancho', 'largo', 'tipoProducto', 'precioUnitario']);
 
         // Paso 1: Determinar el código a usar

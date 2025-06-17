@@ -36,8 +36,11 @@ class UseController extends Controller
         $user->nombreUsuario = $request->nombreUsuario;
         $user->contrasena = $request->contrasena;
         $user->email = $request->email;
+        $user->image = "usuarios/default.jpg";
         $user->password = Hash::make($request->password);
         $user->assignRole($request->rol);  // Asigna el rol recibido desde el formulario
+        
+        
         $user->save();
     }
 
