@@ -16,7 +16,7 @@ class ProductInventoryController extends Controller
     public function index()
     {
         // Obtener todos los inventarios de productos y cargar la relación con 'product'
-        $productInventories = ProductInventory::with('product') // Cargar la relación 'product'
+        $productInventories = ProductInventory::with('product.catalogProduct') // Cargar la relación 'product'
             ->get(); // Obtener todos los registros sin ordenarlos
 
         // Retornar la respuesta en formato JSON

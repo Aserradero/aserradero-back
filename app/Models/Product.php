@@ -9,7 +9,20 @@ class Product extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'precio', 'calidad', 'cantidad', 'ancho', 'grosor',
-        'largo', 'piesTabla', 'fechaRegistro', 'identificadorP','idCatalogProduct'
+        'precio',
+        'calidad',
+        'cantidad',
+        'ancho',
+        'grosor',
+        'largo',
+        'piesTabla',
+        'fechaRegistro',
+        'identificadorP',
+        'idCatalogProduct'
     ];
+
+   public function catalogProduct()
+    {
+        return $this->belongsTo(CatalogProduct::class, 'idCatalogProduct');
+    }
 }
