@@ -27,6 +27,7 @@ class ProductInventoryController extends Controller
      * Store a newly created resource in storage.
      */
 
+    
     public function storeMultiple(Request $request)
     {
         if (!$request->has('productos') || !is_array($request->productos)) {
@@ -77,6 +78,7 @@ class ProductInventoryController extends Controller
             "productos" => $productosGuardados
         ], 201);
     }
+    
     /**
      * Display the specified resource.
      */
