@@ -25,8 +25,7 @@ class SaleController extends Controller
      */
     public function store(Request $request)
     {
-        //Insertando una venta
-
+        // Validación
         $request->validate([
             'idUsuario' => 'required|exists:users,id',
             'productos' => 'required|array|min:1',
@@ -37,18 +36,51 @@ class SaleController extends Controller
         DB::beginTransaction();
 
         try {
+            // 1. Crear la venta
             $venta = Sale::create([
                 'idUsuario' => $request->input('idUsuario')
             ]);
 
+            // 2. Procesar productos vendidos
             foreach ($request->productos as $producto) {
+                // 2.1 Registrar detalle de venta
                 ProductSale::create([
                     'cantidad' => $producto['cantidad'],
                     'producto_id' => $producto['producto_id'],
                     'sale_id' => $venta->id
                 ]);
+
+                // 2.2 Descontar stock FIFO desde product_inventories
+                $cantidadRestante = $producto['cantidad'];
+
+                $inventarios = DB::table('product_inventories')
+                    ->where('idProducto', $producto['producto_id'])
+                    ->where('stockActual', '>', 0)
+                    ->orderBy('created_at') // FIFO
+                    ->get();
+
+                foreach ($inventarios as $inv) {
+                    if ($cantidadRestante <= 0)
+                        break;
+
+                    $porDescontar = min($cantidadRestante, $inv->stockActual);
+                    $nuevoStock = $inv->stockActual - $porDescontar;
+
+                    // Solo actualizar el stock
+                    DB::table('product_inventories')
+                        ->where('id', $inv->id)
+                        ->update(['stockActual' => $nuevoStock]);
+
+                    $cantidadRestante -= $porDescontar;
+                }
+
+                // 2.3 Validar si alcanzó el stock
+                if ($cantidadRestante > 0) {
+                    throw new \Exception('Stock insuficiente para el producto ID: ' . $producto['producto_id']);
+                }
             }
 
+            // 3. Confirmar transacción
             DB::commit();
 
             return response()->json([
@@ -57,12 +89,15 @@ class SaleController extends Controller
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
+
             return response()->json([
                 'error' => 'Error al registrar la venta',
                 'message' => $e->getMessage()
             ], 500);
         }
     }
+
+
 
     /**
      * Display the specified resource.

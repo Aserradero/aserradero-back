@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\ProductInventoryController;
 use App\Http\Controllers\Api\ProductionHistoryController;
 use App\Http\Controllers\Api\RawMaterialController;
 use App\Http\Controllers\Api\RawMaterialInventoryController;
+use App\Http\Controllers\Api\SaleController;
 use App\Http\Controllers\Api\UseController;
 use App\Models\ProductionHistory;
 use Illuminate\Http\Request;
@@ -146,6 +147,10 @@ Route::middleware(['token.expired'])->group(function () {
         return response()->json(['message' => 'Token válido']);
     });
 });
+
+//store
+Route::post('/ventas', [SaleController::class, 'store']);
+
 
 
 // Api para obtener los archivos ppublicos
