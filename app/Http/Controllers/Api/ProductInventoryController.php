@@ -7,7 +7,7 @@ use App\Models\Product;
 use App\Models\ProductInventory;
 use App\Models\ProductionHistory;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\DB;
 class ProductInventoryController extends Controller
 {
     /**
@@ -27,7 +27,7 @@ class ProductInventoryController extends Controller
      * Store a newly created resource in storage.
      */
 
-    
+
     public function storeMultiple(Request $request)
     {
         if (!$request->has('productos') || !is_array($request->productos)) {
@@ -78,7 +78,7 @@ class ProductInventoryController extends Controller
             "productos" => $productosGuardados
         ], 201);
     }
-    
+
     /**
      * Display the specified resource.
      */
@@ -167,55 +167,61 @@ class ProductInventoryController extends Controller
         $identificadorP = $producto['identificadorP'];
         $production = ProductionHistory::where('identificadorP', $identificadorP)->firstOrFail();
 
+        // Validar si el producto ya está relacionado a una venta
+        $productoEnVenta = DB::table('product_sales')->where('producto_id', $idProducto)->exists();
+        if ($productoEnVenta) {
+            return response()->json([
+                'message' => 'El producto ya fue utilizado en una venta. No se puede modificar ni eliminar.',
+            ], 403);
+        }
 
-
+        // Validación de existencia de cantidad suficiente
         if ($producto->cantidad < $cantidadARestar) {
             return response()->json([
                 'message' => 'No hay suficiente cantidad disponible para restar',
                 'cantidadDisponible' => $producto->cantidad
             ], 400);
         }
-
-        //actualizar el StockIdeal del inventario de productos
-        $productInventory->stockActual -= $cantidadARestar;
-        $productInventory->save();
-
-        // Actualizar el producto
+        //  Actualizar el producto
         $producto->cantidad -= $cantidadARestar;
         $producto->piesTabla = ($producto['ancho'] * $producto['largo'] * $producto['grosor'] * $producto['cantidad']) / 12;
         $producto->save();
 
-        // Obtener TODOS los productos con el mismo identificadorP
+        //  Actualizar el stock del inventario, evitando valores negativos
+        if ($productInventory->stockActual > 0) {
+            $productInventory->stockActual = max(0, $productInventory->stockActual - $cantidadARestar);
+            $productInventory->save();
+        }
+
+        // Obtener todos los productos relacionados con la misma producción
         $productosRelacionados = Product::where('identificadorP', $identificadorP)->get();
 
-        // Calcular el nuevo piesTablaTP para la producción
+        //  Calcular nuevo piesTablaTP
         $totalPiesTablaTP = 0;
         foreach ($productosRelacionados as $prod) {
             $totalPiesTablaTP += ($prod->ancho * $prod->largo * $prod->grosor * $prod->cantidad) / 12;
         }
 
-        // Actualizar la producción
+        // 🔧 Actualizar producción
         $production->piesTablaTP = $totalPiesTablaTP;
-        $production->coeficiente = ($production->piesTablaTP * 0.236) / $production->m3TRM / 100; // Actualizar el coeficiente
+        $production->coeficiente = ($production->piesTablaTP * 0.236) / $production->m3TRM / 100;
         $production->save();
 
-        // Eliminar si la cantidad llega a 0
+        // Si la cantidad del producto llegó a 0, puedes notificar pero **no eliminar**
         if ($producto->cantidad == 0) {
-            $productInventory->delete();
-            $producto->delete();
-
             return response()->json([
-                'message' => 'Producto eliminado correctamente porque la cantidad llegó a 0',
+                'message' => 'La cantidad del producto llegó a 0, pero no se eliminó porque no está permitido.',
                 'cantidadDisponible' => 0,
-                'eliminado' => true,
-                'production_updated' => $production // Devuelve los datos actualizados de producción
+                'eliminado' => false,
+                'production_updated' => $production
             ], 200);
         }
 
         return response()->json([
             'message' => 'Cantidad actualizada correctamente',
             'cantidadRestante' => $producto->cantidad,
-            'production_updated' => $production // Devuelve los datos actualizados de producción
+            'production_updated' => $production
         ], 200);
     }
+
 }
