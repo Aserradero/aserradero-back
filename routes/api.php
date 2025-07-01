@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\CatalogProductController;
 use App\Http\Controllers\Api\EmailController;
+use App\Http\Controllers\Api\PriceHistoryController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\ProductInventoryController;
 use App\Http\Controllers\Api\ProductionHistoryController;
@@ -47,6 +48,7 @@ Route::apiResource('productInventory', ProductInventoryController::class);
 Route::apiResource('rawMaterialInventory', RawMaterialInventoryController::class);
 Route::apiResource('product', ProductController::class);
 Route::apiResource('material', RawMaterialController::class);
+Route::apiResource('priceHistory', PriceHistoryController::class);
 //Route::apiResource('rawMaterial',RawMaterialController::class);
 //api para cambiar el valor del identificador de la materia prima dependiendo de que producccion es
 {/* */
@@ -116,6 +118,14 @@ Route::controller(CatalogProductController::class)->group(function () {
     Route::post('/catalogProduct', 'store');
     Route::put('/catalogProduct/{id}', action: [CatalogProductController::class, 'update']);
     Route::delete('/catalogProduct/{id}',[CatalogProductController::class,'destroy']);
+
+});
+
+//Rutas para el historial de precios
+Route::controller(PriceHistoryController::class)->group(function () {
+    Route::get('/priceHistory', 'index');
+    Route::post('/priceHistory', 'store');
+    Route::get('/priceHistory/{id}', 'show');
 
 
 });

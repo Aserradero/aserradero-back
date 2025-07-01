@@ -19,9 +19,9 @@ class UserSeeder extends Seeder
         $usuario = User::create([
             'name' => 'Juan',
             'apellidos' => 'Pérez Gómez',
-            'telefono' => '6621234567',
+            'telefono' => '9512123567',
             'genero' => 'M',
-            'nombreUsuario' => 'juanperez',
+            'nombreUsuario' => 'juanperez2',
             'contrasena' => Hash::make('contrasena123'), // opcional
             'email' => 'juan@example.com',
             'email_verified_at' => now(),
@@ -79,7 +79,7 @@ class UserSeeder extends Seeder
         $usuariod = User::create([
             'name' => 'saul dos',
             'apellidos' => 'Pérez Gómez',
-            'telefono' => '6621234589',
+            'telefono' => '9512349010',
             'genero' => 'M',
             'nombreUsuario' => 'saul5466',
             'contrasena' => Hash::make('contrasena123'), // opcional

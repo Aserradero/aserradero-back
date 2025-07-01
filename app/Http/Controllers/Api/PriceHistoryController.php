@@ -3,16 +3,18 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\PrecieHistory;
 use Illuminate\Http\Request;
 
-class BillController extends Controller
+class PriceHistoryController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index() 
     {
-        //
+        $priceHistory = PrecieHistory::all();
+        return $priceHistory;
     }
 
     /**
@@ -21,6 +23,17 @@ class BillController extends Controller
     public function store(Request $request)
     {
         //
+        $history = new PrecieHistory();
+        $history->calidad = $request->calidad;
+        $history->precio = $request->precio;
+        $history->ancho = $request->ancho;
+        $history->grosor = $request->grosor;
+        $history->largo = $request->largo;
+        $history->fechaRegistro = $request->fechaRegistro;
+        $history->fechaActualizada = $request->fechaActualizada;
+        $history->idUsuario = $request->idUsuario; 
+                
+        $history->save();
     }
 
     /**
@@ -29,6 +42,8 @@ class BillController extends Controller
     public function show(string $id)
     {
         //
+        $history = PrecieHistory::find($id);
+        return $history;
     }
 
     /**
