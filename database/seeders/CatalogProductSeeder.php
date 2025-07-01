@@ -780,10 +780,10 @@ class CatalogProductSeeder extends Seeder
             //Vigueta
             //1
               [
-                'grosor' => 0,
-                'ancho' => 0,
-                'largo' => 0,
-                'precioUnitario' => 0,
+                'grosor' => 3,
+                'ancho' => 5,
+                'largo' => 17.22,
+                'precioUnitario' => 20.50,
                 'tipoProducto' => "Vigueta",
                 'codigoProducto' => "vigueta",
                 "image"=>"productos/default.jpeg",
