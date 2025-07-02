@@ -12,6 +12,16 @@ class ProductSale extends Model
         'cantidad',
         'producto_id',
         'sale_id'
-        
-     ];
+
+    ];
+
+    public function sale()
+    {
+        return $this->belongsTo(Sale::class, 'sale_id');
+    }
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class, 'producto_id');
+    }
 }

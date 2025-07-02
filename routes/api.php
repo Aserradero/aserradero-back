@@ -178,3 +178,6 @@ Route::get('/archivo-publico/{path}', function ($path) {
 
 //rutas para la factura
 Route::post('/bills', [BillController::class, 'store']);
+
+//rutas para la obtener las ventas
+Route::get('/sales', [SaleController::class, 'index']);
