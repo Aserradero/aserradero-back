@@ -9,18 +9,17 @@ class Bill extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'cantidad',
-        'unidad',
-        'descripcion',
-        'subTotal',
-        'IVA',
-        'precioUnitario',
-        'importeConcepto',
-        'totalVenta',
-        'datosCliente',
-        'fechaCompra',
-        'nombreUsuario',
+        'piesTablaTotal',
+        'nombreCliente',
+        'rfc',
+        'telefono',
+        'direccion',
+        'importeLetra',
+        'tipoVenta',
+        'subtotal',
+        'iva',
+        'total',
         'sale_id',
         'user_id'
-     ];
+    ];
 }

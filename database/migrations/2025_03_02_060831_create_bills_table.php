@@ -13,17 +13,18 @@ return new class extends Migration
     {
         Schema::create('bills', function (Blueprint $table) {
             $table->id();
-            $table->float('cantidad', 16, 5);
-            $table->char('unidad', 5);
-            $table->char('descripcion', 50);
-            $table->double('subTotal', 16, 5);
-            $table->double('IVA', 16, 5);
-            $table->double('precioUnitario', 16, 5);
-            $table->double('importeConcepto', 16, 5);
-            $table->double('totalVenta', 16, 5);
-            $table->char('datosCliente', 50);
-            $table->date('fechaCompra');
-            $table->char('nombreUsuario', 25);
+            $table->double('piesTablaTotal', 16, 3);
+            $table->string('nombreCliente', 100);
+            $table->string('rfc', 20);
+            $table->string('telefono', 15);
+            $table->string('direccion', 100);
+            $table->string('importeLetra', 100);
+            $table->string('tipoVenta', 50);
+            $table->double('subtotal', 16,3);
+            $table->double('iva', 16,3);
+            $table->double('total', 16,3);
+            
+
             $table->timestamps();
 
             //llaves foraneas
