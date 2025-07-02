@@ -124,9 +124,8 @@ Route::controller(CatalogProductController::class)->group(function () {
 //Rutas para el historial de precios
 Route::controller(PriceHistoryController::class)->group(function () {
     Route::get('/priceHistory', 'index');
-    Route::post('/priceHistory', 'store');
+    Route::post('/priceHistory', [PriceHistoryController::class, 'store']);
     Route::get('/priceHistory/{id}', 'show');
-
 
 });
 
