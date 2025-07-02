@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\PrecieHistory;
+use App\Models\PriceHistory;
 use Illuminate\Http\Request;
 
 class PriceHistoryController extends Controller
@@ -13,7 +13,7 @@ class PriceHistoryController extends Controller
      */
     public function index() 
     {
-        $priceHistory = PrecieHistory::all();
+        $priceHistory = PriceHistory::all();
         return $priceHistory;
     }
 
@@ -23,7 +23,7 @@ class PriceHistoryController extends Controller
     public function store(Request $request)
     {
         //
-        $history = new PrecieHistory();
+        $history = new PriceHistory();
         $history->calidad = $request->calidad;
         $history->precio = $request->precio;
         $history->ancho = $request->ancho;
@@ -42,7 +42,7 @@ class PriceHistoryController extends Controller
     public function show(string $id)
     {
         //
-        $history = PrecieHistory::find($id);
+        $history = PriceHistory::find($id);
         return $history;
     }
 
