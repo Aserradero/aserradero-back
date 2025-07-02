@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\RawMaterialController;
 use App\Http\Controllers\Api\RawMaterialInventoryController;
 use App\Http\Controllers\Api\SaleController;
 use App\Http\Controllers\Api\UseController;
+use App\Http\Controllers\Api\BillController;
 use App\Models\ProductionHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -172,3 +173,7 @@ Route::get('/archivo-publico/{path}', function ($path) {
 
     return response()->file($file);
 })->where('path', '.*');
+
+
+//rutas para la factura
+Route::post('/bills', [BillController::class, 'store']);
