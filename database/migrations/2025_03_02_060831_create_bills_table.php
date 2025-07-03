@@ -14,10 +14,6 @@ return new class extends Migration
         Schema::create('bills', function (Blueprint $table) {
             $table->id();
             $table->double('piesTablaTotal', 16, 3);
-            $table->string('nombreCliente', 100);
-            $table->string('rfc', 20);
-            $table->string('telefono', 15);
-            $table->string('direccion', 100);
             $table->string('importeLetra', 100);
             $table->string('tipoVenta', 50);
             $table->double('subtotal', 16,3);
@@ -30,6 +26,7 @@ return new class extends Migration
             //llaves foraneas
             $table->foreignId('sale_id')->constrained('sales')->onDelete('cascade');
             $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');
+            $table->foreignId('client_id')->nullable()->constrained('clients')->onDelete('restrict');
         });
     }
 
