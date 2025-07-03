@@ -23,10 +23,6 @@ class BillController extends Controller
     {
         $request->validate([
             'piesTablaTotal' => 'required|numeric',
-            'nombreCliente' => 'required|string|max:100',
-            'rfc' => 'required|string|max:20',
-            'telefono' => 'required|string|max:15',
-            'direccion' => 'required|string|max:100',
             'importeLetra' => 'required|string|max:100',
             'tipoVenta' => 'required|string|max:50',
             'subtotal' => 'required|numeric',
@@ -34,6 +30,7 @@ class BillController extends Controller
             'total' => 'required|numeric',
             'sale_id' => 'required|exists:sales,id',
             'user_id' => 'nullable|exists:users,id',
+            'client_id' => 'nullable|exists:clients,id',
         ]);
 
         $factura = Bill::create($request->all());

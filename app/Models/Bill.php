@@ -10,17 +10,15 @@ class Bill extends Model
     use HasFactory;
     protected $fillable = [
         'piesTablaTotal',
-        'nombreCliente',
-        'rfc',
-        'telefono',
-        'direccion',
         'importeLetra',
         'tipoVenta',
         'subtotal',
         'iva',
         'total',
         'sale_id',
-        'user_id'
+        'user_id',
+        'client_id',
+
     ];
 
     public function sale()
