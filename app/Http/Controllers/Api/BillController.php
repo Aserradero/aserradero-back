@@ -21,6 +21,7 @@ class BillController extends Controller
      */
     public function store(Request $request)
     {
+        
         $request->validate([
             'piesTablaTotal' => 'required|numeric',
             'importeLetra' => 'required|string|max:100',
@@ -38,6 +39,7 @@ class BillController extends Controller
         return response()->json([
             'message' => 'Factura registrada exitosamente',
             'bill' => $factura
+            
         ], 201);
     }
     /**

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\CatalogProductController;
+use App\Http\Controllers\Api\ClientController;
 use App\Http\Controllers\Api\EmailController;
 use App\Http\Controllers\Api\PriceHistoryController;
 use App\Http\Controllers\Api\ProductController;
@@ -118,7 +119,7 @@ Route::controller(CatalogProductController::class)->group(function () {
     Route::get('/catalogProduct', 'index');
     Route::post('/catalogProduct', 'store');
     Route::put('/catalogProduct/{id}', action: [CatalogProductController::class, 'update']);
-    Route::delete('/catalogProduct/{id}',[CatalogProductController::class,'destroy']);
+    Route::delete('/catalogProduct/{id}', [CatalogProductController::class, 'destroy']);
 
 });
 
@@ -180,3 +181,10 @@ Route::post('/bills', [BillController::class, 'store']);
 
 //rutas para la obtener las ventas
 Route::get('/sales', [SaleController::class, 'index']);
+
+//rutas para establecer los clientes
+Route::controller(ClientController::class)->group(function () {
+
+    Route::post('/client', [ClientController::class, 'store']);
+
+});

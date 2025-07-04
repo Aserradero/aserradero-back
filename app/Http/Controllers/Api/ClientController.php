@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Client;
 use Illuminate\Http\Request;
 
 class ClientController extends Controller
@@ -20,7 +21,20 @@ class ClientController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        //Insertar un nuevo cliente
+        $request->validate([
+            'nombreCliente' => 'required|string|max:255',
+            'rfc' => 'required|string|max:255',
+            'telefono' => 'nullable|string|max:20',
+            'direccion' => 'nullable|string|max:255',
+            'correoElectronico' => 'nullable|email|max:255',
+        ]);
+        $cliente = Client::create($request->all());
+        return response()->json([
+            'message' => 'Cliente registrado exitosamente',
+            'client' => $cliente,
+            'client_id' => $cliente->id
+        ], 201);
     }
 
     /**
