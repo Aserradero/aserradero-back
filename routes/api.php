@@ -188,5 +188,6 @@ Route::controller(ClientController::class)->group(function () {
     Route::post('/client', [ClientController::class, 'store']);
     Route::get('/client', [ClientController::class, 'findByRfc']);
     Route::get('/clients', [ClientController::class, 'index']);
+    Route::post('/clientes/buscar-rfc', [ClientController::class, 'buscarPorRfc']);
 
 });

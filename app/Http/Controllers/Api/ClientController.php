@@ -61,6 +61,22 @@ class ClientController extends Controller
     }
 
 
+    public function buscarPorRfc(Request $request)
+    {
+        $request->validate([
+            'rfc' => 'required|string'
+        ]);
+
+        $cliente = Client::where('rfc', $request->rfc)->first();
+
+        if ($cliente) {
+            return response()->json(['cliente' => $cliente], 200);
+        } else {
+            return response()->json(['cliente' => null], 404);
+        }
+    }
+
+
 
     /**
      * Update the specified resource in storage.
