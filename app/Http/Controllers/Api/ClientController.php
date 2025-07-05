@@ -13,7 +13,9 @@ class ClientController extends Controller
      */
     public function index()
     {
-        //
+        //Obtener todos los clientes
+        $clients = Client::all();
+        return $clients;
     }
 
     /**
@@ -44,6 +46,21 @@ class ClientController extends Controller
     {
         //
     }
+
+    //buscar cliente por RFC
+    public function findByRfc(Request $request)
+    {
+        $rfc = $request->query('rfc');
+        $client = Client::where('rfc', $rfc)->first();
+
+        if (!$client) {
+            return response()->json(['message' => 'Cliente no encontrado'], 404);
+        }
+
+        return response()->json($client);
+    }
+
+
 
     /**
      * Update the specified resource in storage.
