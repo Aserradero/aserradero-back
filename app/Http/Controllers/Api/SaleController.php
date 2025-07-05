@@ -19,7 +19,8 @@ class SaleController extends Controller
         $ventas = Sale::with([
             'user',                 // Usuario que registró la venta
             'productSales.product', // Productos de la venta
-            'bill.user'             // Factura y usuario que la generó
+            'bill.user',             // Factura y usuario que la generó
+            'bill.client'
         ])->get();
 
         return response()->json($ventas);

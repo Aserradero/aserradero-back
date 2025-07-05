@@ -16,4 +16,9 @@ class Client extends Model
         'direccion',
         'correoElectronico'
     ];
+
+    public function bill(){
+        return $this->hasMany(Bill::class);
+    }
+
 }
