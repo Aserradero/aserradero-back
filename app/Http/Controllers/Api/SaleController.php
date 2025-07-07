@@ -77,6 +77,7 @@ class SaleController extends Controller
                     ->where('product_inventories.stockActual', '>', 0)
                     ->orderBy('product_inventories.created_at') // FIFO
                     ->select('product_inventories.id', 'product_inventories.stockActual')
+                    ->lockForUpdate() //  Esto bloquea las filas hasta que la transacción termine
                     ->get();
 
                 // 2.4 Descontar el stock de los registros equivalentes
