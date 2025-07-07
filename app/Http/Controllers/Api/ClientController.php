@@ -26,6 +26,7 @@ class ClientController extends Controller
         //Insertar un nuevo cliente
         $request->validate([
             'nombreCliente' => 'required|string|max:255',
+            'apellidosCliente'=>'required|string|max:255',
             'rfc' => 'required|string|max:255',
             'telefono' => 'nullable|string|max:20',
             'direccion' => 'nullable|string|max:255',
