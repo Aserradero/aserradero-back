@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Client;
 use Illuminate\Http\Request;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Log;
 
 class ClientController extends Controller
 {
@@ -26,7 +28,7 @@ class ClientController extends Controller
         //Insertar un nuevo cliente
         $request->validate([
             'nombreCliente' => 'required|string|max:255',
-            'apellidosCliente'=>'required|string|max:255',
+            'apellidosCliente' => 'required|string|max:255',
             'rfc' => 'required|string|max:255',
             'telefono' => 'nullable|string|max:20',
             'direccion' => 'nullable|string|max:255',
@@ -90,8 +92,31 @@ class ClientController extends Controller
     /**
      * Remove the specified resource from storage.
      */
+
     public function destroy(string $id)
     {
-        //
+        try {
+            $client = Client::findOrFail($id);
+            $client->delete();
+
+            return response()->json([
+                'message' => 'Cliente eliminado correctamente.'
+            ], 200);
+
+        } catch (QueryException $e) {
+            // Código de error SQL para violación de restricción de clave foránea: 23000
+            if ($e->getCode() === '23000') {
+                return response()->json([
+                    'error' => 'No se puede eliminar el cliente porque está relacionado con una factura.'
+                ], 409);
+            }
+
+            // Otros errores de base de datos
+            Log::error('Error al eliminar cliente: ' . $e->getMessage());
+
+            return response()->json([
+                'error' => 'Ocurrió un error inesperado al intentar eliminar el cliente.'
+            ], 500);
+        }
     }
 }
