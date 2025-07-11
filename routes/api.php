@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\ClientController;
 use App\Http\Controllers\Api\EmailController;
 use App\Http\Controllers\Api\PriceHistoryController;
 use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\ProductSaleController;
 use App\Http\Controllers\Api\ProductInventoryController;
 use App\Http\Controllers\Api\ProductionHistoryController;
 use App\Http\Controllers\Api\RawMaterialController;
@@ -86,6 +87,11 @@ Route::controller(ProductController::class)->group(function () {
     Route::get('/product/{id}', 'show');
     Route::put('/product/{id}', 'update');
     Route::delete('/product/{id}', 'destroy');
+});
+
+Route::controller(ProductSaleController::class)->group(function () {
+    Route::get('/productsSale', 'index');
+    Route::get('/productSale/{id}', 'show');
 });
 
 Route::controller(ProductInventoryController::class)->group(function () {
