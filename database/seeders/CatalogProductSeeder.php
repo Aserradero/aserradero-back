@@ -56,6 +56,8 @@ class CatalogProductSeeder extends Seeder
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
+            /*
+            Se repite
             //4
             [
                 'grosor' => 0.75,
@@ -68,6 +70,7 @@ class CatalogProductSeeder extends Seeder
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
+            */
             //5
             [
                 'grosor' => 0.75,
