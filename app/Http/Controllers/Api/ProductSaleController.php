@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\ProductSale; 
+use App\Models\ProductSale;
 use Illuminate\Http\Request;
 
 class ProductSaleController extends Controller
@@ -11,11 +11,11 @@ class ProductSaleController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index() 
+    public function index()
     {
-    $sales = ProductSale::with('product')->get();
+        $sales = ProductSale::with('product')->get();
 
-    return response()->json($sales);
+        return response()->json($sales);
     }
 
     /**
@@ -23,7 +23,7 @@ class ProductSaleController extends Controller
      */
     public function storeMultiple(Request $request)
     {
-   
+
     }
 
     /**
@@ -41,11 +41,8 @@ class ProductSaleController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        
+
     }
 
-    public function product()
-{
-    return $this->belongsTo(Product::class, 'producto_id');
-}
+   
 }

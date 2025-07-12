@@ -86,7 +86,7 @@ class ClientController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        // Validar campos
+        // Validar los campos básicos
         $validated = $request->validate([
             'nombreCliente' => 'required|string|max:255',
             'apellidosCliente' => 'required|string|max:255',
@@ -96,18 +96,53 @@ class ClientController extends Controller
             'correoElectronico' => 'required|email|max:255',
         ]);
 
-        // Buscar cliente
+        // Buscar el cliente actual
         $cliente = Client::findOrFail($id);
 
-        // Actualizar campos
+        // Verificar si hay duplicados en otros registros
+        $mensajesError = [];
+
+        if (
+            Client::where('rfc', $validated['rfc'])
+                ->where('id', '!=', $cliente->id)
+                ->exists()
+        ) {
+            $mensajesError[] = "Ya existe otro cliente con este RFC. Por favor, ingresa uno diferente.";
+        }
+
+        if (
+            Client::where('telefono', $validated['telefono'])
+                ->where('id', '!=', $cliente->id)
+                ->exists()
+        ) {
+            $mensajesError[] = "Ya existe otro cliente con este número telefónico. Por favor, verifica o usa otro.";
+        }
+
+        if (
+            Client::where('correoElectronico', $validated['correoElectronico'])
+                ->where('id', '!=', $cliente->id)
+                ->exists()
+        ) {
+            $mensajesError[] = "Ya existe otro cliente con este correo electrónico. Por favor, usa uno diferente.";
+        }
+
+        // Si hay errores, retornar respuesta con código 409
+        if (!empty($mensajesError)) {
+            return response()->json([
+                'message' => 'Conflicto de datos encontrados',
+                'errors' => $mensajesError,
+            ], 409);
+        }
+
+        // Actualizar cliente si no hay conflictos
         $cliente->update($validated);
 
-        // Respuesta
         return response()->json([
             'message' => 'Cliente actualizado correctamente',
             'cliente' => $cliente
         ], 200);
     }
+
 
 
     /**
