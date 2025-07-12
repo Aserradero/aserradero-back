@@ -126,27 +126,51 @@ class RawMaterialController extends Controller
     {
         $totalActualizados = 0;
         $idsNoEncontrados = [];
+        $idsYaAsignados = [];
+        $idsConcurrencia = [];
 
-        foreach ($request->all() as $materiaP) {
-            // Verificar si el ID existe antes de actualizar
-            $exists = RawMaterial::where('id', $materiaP['id'])->exists();
+        DB::beginTransaction();
 
-            if ($exists) {
-                RawMaterial::where('id', $materiaP['id'])
-                    ->update([
-                        'identificadorP' => $materiaP['identificadorP'],
-                        'updated_at' => $materiaP['updated_at'] ?? now() // Actualiza la fecha a la fecha actual
-                    ]);
+        try {
+            foreach ($request->all() as $materiaP) {
+                // Usar bloqueo SELECT FOR UPDATE para evitar condiciones de carrera
+                $rawMaterial = RawMaterial::where('id', $materiaP['id'])->lockForUpdate()->first();
+
+                if (!$rawMaterial) {
+                    $idsNoEncontrados[] = $materiaP['id'];
+                    continue;
+                }
+
+                if (!is_null($rawMaterial->identificadorP)) {
+                    // Ya tiene identificadorP asignado, no se puede volver a asignar
+                    $idsYaAsignados[] = $materiaP['id'];
+                    continue;
+                }
+
+                // Asignar identificador
+                $rawMaterial->identificadorP = $materiaP['identificadorP'];
+                $rawMaterial->updated_at = $materiaP['updated_at'] ?? now();
+                $rawMaterial->save();
+
                 $totalActualizados++;
-            } else {
-                $idsNoEncontrados[] = $materiaP['id'];
             }
-        }
 
-        return response()->json([
-            'message' => 'Proceso de actualización completado',
-            'total_actualizados' => $totalActualizados,
-            'ids_no_encontrados' => $idsNoEncontrados
-        ], 200);
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Proceso de actualización completado',
+                'total_actualizados' => $totalActualizados,
+                'ids_no_encontrados' => $idsNoEncontrados,
+                'ids_ya_asignados' => $idsYaAsignados
+            ], 200);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Error durante la actualización',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
+
 }

@@ -196,4 +196,5 @@ Route::controller(ClientController::class)->group(function () {
     Route::get('/clients', [ClientController::class, 'index']);
     Route::post('/clientes/buscar-rfc', [ClientController::class, 'buscarPorRfc']);
     Route::delete('/client/{id}',[ClientController::class,'destroy']);
+    Route::put('/client/{id}', [ClientController::class, 'update']);
 });

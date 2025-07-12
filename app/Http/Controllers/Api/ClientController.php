@@ -86,8 +86,29 @@ class ClientController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        // Validar campos
+        $validated = $request->validate([
+            'nombreCliente' => 'required|string|max:255',
+            'apellidosCliente' => 'required|string|max:255',
+            'rfc' => 'required|string|max:18',
+            'telefono' => 'required|string|max:10',
+            'direccion' => 'required|string|max:255',
+            'correoElectronico' => 'required|email|max:255',
+        ]);
+
+        // Buscar cliente
+        $cliente = Client::findOrFail($id);
+
+        // Actualizar campos
+        $cliente->update($validated);
+
+        // Respuesta
+        return response()->json([
+            'message' => 'Cliente actualizado correctamente',
+            'cliente' => $cliente
+        ], 200);
     }
+
 
     /**
      * Remove the specified resource from storage.
