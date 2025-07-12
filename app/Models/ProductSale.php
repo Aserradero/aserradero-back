@@ -24,4 +24,4 @@ class ProductSale extends Model
     {
         return $this->belongsTo(Product::class, 'producto_id');
     }
-}
+} 
