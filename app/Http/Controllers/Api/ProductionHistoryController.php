@@ -182,35 +182,35 @@ class ProductionHistoryController extends Controller
         DB::beginTransaction();
 
         try {
-            $identificadorP = $request->input('identificadorP');
+            // Bloquear la secuencia para evitar concurrencia
+            $secuencia = DB::table('production_sequence')->lockForUpdate()->first();
 
-            // Verificar si el identificadorP ya existe
-            $yaExiste = ProductionHistory::where('identificadorP', $identificadorP)->exists();
-            if ($yaExiste) {
-                return response()->json([
-                    'message' => 'Este identificador ya fue registrado por otro usuario.',
-                ], 409);
-            }
+            $nuevoId = $secuencia->last_id + 1;
+            $nuevoIdentificador = $secuencia->last_identificadorP + 1;
 
-            // Registrar historial SOLO con los campos que envías
+            // Actualizar la secuencia
+            DB::table('production_sequence')->where('id', $secuencia->id)->update([
+                'last_id' => $nuevoId,
+                'last_identificadorP' => $nuevoIdentificador
+            ]);
+
+            // Registrar la producción con ID manual
             $nuevo = new ProductionHistory();
+            $nuevo->id = $nuevoId;
             $nuevo->m3TRM = $request->input('m3TRM');
-            $nuevo->identificadorP = $identificadorP;
+            $nuevo->identificadorP = $nuevoIdentificador;
             $nuevo->user_id = $request->input('user_id');
             $nuevo->save();
 
-            // Actualizar materias primas con lockForUpdate
-            $productos = $request->input('productos'); // array de productos
-
-            foreach ($productos as $producto) {
+            //  Actualizar materias primas
+            foreach ($request->input('productos') as $producto) {
                 $materia = RawMaterial::where('id', $producto['id'])->lockForUpdate()->first();
 
                 if (!$materia || $materia->identificadorP !== null) {
                     throw new \Exception("Materia prima no encontrada o ya asignada");
                 }
 
-                $materia->identificadorP = $nuevo->id;
-                ;
+                $materia->identificadorP = $nuevoId; // Se refiere al production_histories.id
                 $materia->updated_at = $producto['updated_at'] ?? now();
                 $materia->save();
             }
@@ -218,9 +218,10 @@ class ProductionHistoryController extends Controller
             DB::commit();
 
             return response()->json([
-                'message' => 'Producción registrada y materias actualizadas',
-                'registro' => $nuevo
-            ], 201);
+                'message' => 'Producción registrada correctamente',
+                'id' => $nuevoId,
+                'identificadorP' => $nuevoIdentificador,
+            ]);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json([
@@ -229,4 +230,8 @@ class ProductionHistoryController extends Controller
             ], 500);
         }
     }
+
+
+
+
 }

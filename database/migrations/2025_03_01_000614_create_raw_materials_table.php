@@ -19,7 +19,7 @@ return new class extends Migration {
             $table->double('metroCR', 16, 5);
             $table->date('fechaRegistro');
             $table->char('calidad', 20);
-            //$table->integer('identificadorP');
+            
             $table->foreignId(column: 'identificadorP')->nullable()->constrained('production_histories');
 
 
