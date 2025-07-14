@@ -114,6 +114,7 @@ Route::controller(RawMaterialInventoryController::class)->group(function () {
 
 Route::controller(ProductionHistoryController::class)->group(function () {
     Route::post('/productionHistory', [ProductionHistoryController::class, 'storeMultiple']);
+    Route::post('/productionHistoryNu', [ProductionHistoryController::class, 'registrarProduccionYActualizarMaterias']);
     Route::get('/obtenerProductionHistory', 'index');
     Route::put('/productionHistory/{id}', 'update');
     Route::put('/productionHistoryUpdate/{id}', [ProductionHistoryController::class, 'updateStatus']);
@@ -195,6 +196,6 @@ Route::controller(ClientController::class)->group(function () {
     Route::get('/client', [ClientController::class, 'findByRfc']);
     Route::get('/clients', [ClientController::class, 'index']);
     Route::post('/clientes/buscar-rfc', [ClientController::class, 'buscarPorRfc']);
-    Route::delete('/client/{id}',[ClientController::class,'destroy']);
+    Route::delete('/client/{id}', [ClientController::class, 'destroy']);
     Route::put('/client/{id}', [ClientController::class, 'update']);
 });

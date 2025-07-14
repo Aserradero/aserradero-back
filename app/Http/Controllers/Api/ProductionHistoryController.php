@@ -8,6 +8,8 @@ use App\Models\ProductionHistory;
 use App\Models\RawMaterial;
 use Illuminate\Http\Request;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\DB;
+
 
 
 class ProductionHistoryController extends Controller
@@ -172,4 +174,58 @@ class ProductionHistoryController extends Controller
             'production' => $produccionesActualizadas
         ], 200);
     }
+
+
+
+   public function registrarProduccionYActualizarMaterias(Request $request)
+{
+    DB::beginTransaction();
+
+    try {
+        $identificadorP = $request->input('identificadorP');
+
+        // Verificar si el identificadorP ya existe
+        $yaExiste = ProductionHistory::where('identificadorP', $identificadorP)->exists();
+        if ($yaExiste) {
+            return response()->json([
+                'message' => 'Este identificador ya fue registrado por otro usuario.',
+            ], 409);
+        }
+
+        // Registrar historial SOLO con los campos que envías
+        $nuevo = new ProductionHistory();
+        $nuevo->m3TRM = $request->input('m3TRM');
+        $nuevo->identificadorP = $identificadorP;
+        $nuevo->user_id = $request->input('user_id');
+        $nuevo->save();
+
+        // Actualizar materias primas con lockForUpdate
+        $productos = $request->input('productos'); // array de productos
+
+        foreach ($productos as $producto) {
+            $materia = RawMaterial::where('id', $producto['id'])->lockForUpdate()->first();
+
+            if (!$materia || $materia->identificadorP !== null) {
+                throw new \Exception("Materia prima no encontrada o ya asignada");
+            }
+
+            $materia->identificadorP = $identificadorP;
+            $materia->updated_at = $producto['updated_at'] ?? now();
+            $materia->save();
+        }
+
+        DB::commit();
+
+        return response()->json([
+            'message' => 'Producción registrada y materias actualizadas',
+            'registro' => $nuevo
+        ], 201);
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return response()->json([
+            'message' => 'Error durante la operación',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
 }
