@@ -7,7 +7,7 @@ use App\Models\Product;
 use App\Models\ProductionHistory;
 use App\Models\RawMaterial;
 use Illuminate\Http\Request;
-
+use Illuminate\Database\QueryException;
 
 
 class ProductionHistoryController extends Controller
@@ -30,23 +30,47 @@ class ProductionHistoryController extends Controller
      */
     public function storeMultiple(Request $request)
     {
-        // Puedes agregar validaciones aquí si lo deseas (opcional)
+        try {
+            // Verifica si ya existe
+            $existe = ProductionHistory::where('identificadorP', $request->input('identificadorP'))->exists();
 
-        $nuevoProduction = new ProductionHistory();
+            if ($existe) {
+                return response()->json([
+                    "message" => "Ya existe un registro con ese identificador.",
+                    "error" => true
+                ], 409);
+            }
 
-        $nuevoProduction->coeficiente = $request->input('coeficiente');
-        $nuevoProduction->m3TRM = $request->input('m3TRM');
-        $nuevoProduction->piesTablaTP = $request->input('piesTablaTP');
-        $nuevoProduction->fechaFinalizacion = $request->input('fechaFinalizacion');
-        $nuevoProduction->identificadorP = $request->input('identificadorP');
-        $nuevoProduction->user_id = $request->input('user_id');
+            // Intenta guardar
+            $nuevoProduction = new ProductionHistory();
+            $nuevoProduction->coeficiente = $request->input('coeficiente');
+            $nuevoProduction->m3TRM = $request->input('m3TRM');
+            $nuevoProduction->piesTablaTP = $request->input('piesTablaTP');
+            $nuevoProduction->fechaFinalizacion = $request->input('fechaFinalizacion');
+            $nuevoProduction->identificadorP = $request->input('identificadorP');
+            $nuevoProduction->user_id = $request->input('user_id');
+            $nuevoProduction->save();
 
-        $nuevoProduction->save();
+            return response()->json([
+                "message" => "Materia registrada correctamente.",
+                "material" => $nuevoProduction
+            ], 201);
 
-        return response()->json([
-            "message" => "Materia registrada correctamente.",
-            "material" => $nuevoProduction
-        ], 201);
+        } catch (QueryException $e) {
+            // Captura duplicado por restricción única
+            if ($e->errorInfo[1] == 1062) { // Código MySQL para entrada duplicada
+                return response()->json([
+                    "message" => "Este identificador ya fue registrado por otro usuario.",
+                    "error" => true
+                ], 409);
+            }
+
+            // Otros errores
+            return response()->json([
+                "message" => "Error inesperado al registrar la producción.",
+                "error" => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
