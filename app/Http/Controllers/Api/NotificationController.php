@@ -32,7 +32,8 @@ class NotificationController extends Controller
             'largo' => 'required|numeric',
             'piesTabla' => 'required|numeric',
             'activo' => 'boolean',
-            'stockIdealPT' => 'required|numeric'
+            'stockIdealPT' => 'required|numeric',
+            'image' => 'string | max:255'
         ]);
 
         $notificacionExistente = Notification::where('calidad', $validated['calidad'])

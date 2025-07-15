@@ -19,7 +19,7 @@ return new class extends Migration {
             $table->double('piesTabla', 16, 5);
             $table->boolean('activo')->default(false);
             $table->double('stockIdealPT', 16, 5);
-
+            $table->string('image')->nullable();
             $table->timestamps();
         });
     }
