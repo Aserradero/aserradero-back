@@ -17,6 +17,7 @@ class Notification extends Model
         'piesTabla',
         'activo',
         'stockIdealPT',
-        'image'
+        'image',
+        'stockActual'
     ];
 }

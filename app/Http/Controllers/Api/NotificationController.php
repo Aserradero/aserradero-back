@@ -33,7 +33,8 @@ class NotificationController extends Controller
             'piesTabla' => 'required|numeric',
             'activo' => 'boolean',
             'stockIdealPT' => 'required|numeric',
-            'image' => 'string | max:255'
+            'image' => 'string | max:255',
+            'stockActual' => 'numeric'
         ]);
 
         $notificacionExistente = Notification::where('calidad', $validated['calidad'])
@@ -72,6 +73,11 @@ class NotificationController extends Controller
                 $actualizar = true;
             }
 
+            if ($notificacionExistente->stockActual != $validated['stockActual']) {
+                $camposActualizar['stockActual'] = $validated['stockActual'];
+                $actualizar = true;
+            }
+
             if ($actualizar) {
                 $notificacionExistente->update($camposActualizar);
                 return response()->json([
@@ -81,9 +87,11 @@ class NotificationController extends Controller
             }
 
             return response()->json([
-                'message' => 'Ya existe una notificación activa con los mismos valores.',
+                'message' => 'No se detectaron cambios.',
+                'data' => $notificacionExistente
             ], 200);
         }
+
 
         // Crear nueva notificación si no existe
         $notification = Notification::create($validated);

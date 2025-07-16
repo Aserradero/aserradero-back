@@ -20,6 +20,7 @@ return new class extends Migration {
             $table->boolean('activo')->default(false);
             $table->double('stockIdealPT', 16, 5);
             $table->string('image')->nullable();
+            $table->double('stockActual');
             $table->timestamps();
         });
     }
