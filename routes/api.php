@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\CatalogProductController;
 use App\Http\Controllers\Api\ClientController;
 use App\Http\Controllers\Api\EmailController;
+use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\PriceHistoryController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\ProductSaleController;
@@ -119,6 +120,12 @@ Route::controller(ProductionHistoryController::class)->group(function () {
     Route::put('/productionHistory/{id}', 'update');
     Route::put('/productionHistoryUpdate/{id}', [ProductionHistoryController::class, 'updateStatus']);
     Route::put('/productionHistoryDatos', [ProductionHistoryController::class, 'updateDatos']);
+});
+
+
+Route::controller(NotificationController::class)->group(function () {
+    Route::post('/notification', [NotificationController::class, 'store']);
+    Route::get('/notifications',[NotificationController::class,'index']);
 });
 
 //Rutas para el catalogo de productos
