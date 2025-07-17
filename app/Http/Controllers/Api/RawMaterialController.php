@@ -173,4 +173,27 @@ class RawMaterialController extends Controller
         }
     }
 
+
+    public function getGroupedRawMaterials()
+    {
+        $grouped = DB::table('raw_materials')
+            ->select(
+                'calidad',
+                'diametroUno',
+                'diametroDos',
+                'largo',
+                DB::raw('SUM(metroCR) as total_metroCR'),
+                DB::raw('COUNT(*) as total_rollos')
+            )
+            ->whereNull('identificadorP') 
+            ->groupBy('calidad', 'diametroUno', 'diametroDos', 'largo')
+            ->orderBy('calidad')
+            ->get();
+
+        return response()->json($grouped);
+    }
+
+
+
+
 }

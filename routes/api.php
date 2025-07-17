@@ -63,6 +63,7 @@ Route::controller(RawMaterialController::class)->group(function () {
     Route::put('/rawMaterial/identificadorP', [RawMaterialController::class, 'updateIdentificadorP']);
     Route::put('/rawMaterials/{id}', 'update');
     Route::delete('/rawMaterial/{id}', 'destroy');
+    Route::get('/raw-materials/grouped', [RawMaterialController::class, 'getGroupedRawMaterials']);
 });
 
 
