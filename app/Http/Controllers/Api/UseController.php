@@ -39,8 +39,8 @@ class UseController extends Controller
         $user->image = $request->image;
         $user->password = Hash::make($request->password);
         $user->assignRole($request->rol);  // Asigna el rol recibido desde el formulario
-        
-        
+
+
         $user->save();
     }
 
@@ -58,12 +58,14 @@ class UseController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $user = User::where('email', $id)->firstOrFail();
+        $user = User::findOrFail($id); 
+
         $user->name = $request->name;
         $user->apellidos = $request->apellidos;
         $user->telefono = $request->telefono;
         $user->genero = $request->genero;
-        $user->nombreUsuario = $request->nombreUsuario;       
+        $user->nombreUsuario = $request->nombreUsuario;
+
         $updateData = $request->except('image');
 
         if ($request->hasFile('image')) {
@@ -79,11 +81,13 @@ class UseController extends Controller
         }
 
         $user->update($updateData);
-         return response()->json([
+
+        return response()->json([
             'message' => 'Usuario actualizado correctamente',
             'user' => $user
         ], 200);
     }
+
 
     public function updatePassword(Request $request)
     {
