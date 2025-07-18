@@ -174,24 +174,23 @@ class RawMaterialController extends Controller
     }
 
 
-    public function getGroupedRawMaterials()
-    {
-        $grouped = DB::table('raw_materials')
-            ->select(
-                'calidad',
-                'diametroUno',
-                'diametroDos',
-                'largo',
-                DB::raw('SUM(metroCR) as total_metroCR'),
-                DB::raw('COUNT(*) as total_rollos')
-            )
-            ->whereNull('identificadorP') 
-            ->groupBy('calidad', 'diametroUno', 'diametroDos', 'largo')
-            ->orderBy('calidad')
-            ->get();
+   public function getGroupedRawMaterials()
+{
+    $grouped = DB::table('raw_materials')
+        ->select(
+            'calidad',
+            DB::raw('SUM(metroCR) as total_metroCR'),
+            DB::raw('COUNT(*) as total_rollos'),
+            DB::raw('MAX(created_at) as created_at')
+        )
+        ->whereNull('identificadorP') // Solo materia prima
+        ->groupBy('calidad')
+        ->orderBy('calidad')
+        ->get();
 
-        return response()->json($grouped);
-    }
+    return response()->json($grouped);
+}
+
 
 
 

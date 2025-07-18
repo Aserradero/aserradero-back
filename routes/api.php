@@ -124,10 +124,7 @@ Route::controller(ProductionHistoryController::class)->group(function () {
 });
 
 
-Route::controller(NotificationController::class)->group(function () {
-    Route::post('/notification', [NotificationController::class, 'store']);
-    Route::get('/notifications',[NotificationController::class,'index']);
-});
+
 
 //Rutas para el catalogo de productos
 Route::controller(CatalogProductController::class)->group(function () {
