@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Mail\CotizacionPdfMail;
+use App\Mail\VentaPdfMail;
 use Illuminate\Http\Request;
 use App\Mail\ContactoMail;
 use Illuminate\Support\Facades\Mail;
@@ -13,7 +15,7 @@ use Illuminate\Support\Str;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 use App\Mail\EmailVerificationMail;
-
+use Illuminate\Support\Facades\Log;
 
 
 
@@ -146,6 +148,66 @@ class EmailController extends Controller
         }
 
         return response()->json(['message' => 'Token inválido.'], 400);
+    }
+
+
+
+
+    public function enviarPdf(Request $request)
+    {
+        try {
+            $request->validate([
+                'archivo' => 'required|file|mimes:pdf|max:2048',
+                'email' => 'required|email',
+            ]);
+
+            $path = $request->file('archivo')->store('public/temp');
+            $fullPath = storage_path('app/' . $path);
+
+            // Enviar correo
+            Mail::to($request->email)->send(new VentaPdfMail($fullPath));
+
+            \Storage::delete($path);
+
+            return response()->json(['message' => 'PDF enviado exitosamente al correo.']);
+
+        } catch (\Throwable $e) {
+            Log::error('Error al enviar PDF: ' . $e->getMessage());
+            return response()->json([
+                'error' => 'Ocurrió un error al enviar el PDF.',
+                'details' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+
+
+
+    public function enviarPdfCotizacion(Request $request)
+    {
+        try {
+            $request->validate([
+                'archivo' => 'required|file|mimes:pdf|max:2048',
+                'email' => 'required|email',
+            ]);
+
+            $path = $request->file('archivo')->store('public/temp');
+            $fullPath = storage_path('app/' . $path);
+
+            // Enviar correo
+            Mail::to($request->email)->send(new CotizacionPdfMail($fullPath));
+
+            \Storage::delete($path);
+
+            return response()->json(['message' => 'PDF enviado exitosamente al correo.']);
+
+        } catch (\Throwable $e) {
+            Log::error('Error al enviar PDF: ' . $e->getMessage());
+            return response()->json([
+                'error' => 'Ocurrió un error al enviar el PDF.',
+                'details' => $e->getMessage()
+            ], 500);
+        }
     }
 
 }

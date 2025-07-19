@@ -155,6 +155,12 @@ Route::post('/update-pass', action: [EmailController::class, 'updatePassword']);
 //Controlador para mandar el correo
 Route::post('/verificarEmail', action: [EmailController::class, 'verificarEmail']);
 
+//enviar pdf
+
+Route::post('/enviar-pdf', [EmailController::class, 'enviarPdf']);
+Route::post('/enviar-pdfCotizacion', [EmailController::class, 'enviarPdfCotizacion']);
+
+
 
 //controlador para hacer la verificacion 
 
