@@ -93,5 +93,25 @@ class UserSeeder extends Seeder
         ]);
         // Asignar rol
         $usuariod->assignRole('jefepatio'); // O 'jefepatio'
+
+
+         $usuario = User::create([
+            'name' => 'Juan Carlos',
+            'apellidos' => 'Maldonado Martínez',
+            'telefono' => '9515678934',
+            'genero' => 'M',
+            'nombreUsuario' => 'juanaseerradero',
+            'contrasena' => Hash::make('aserradero2025'), // opcional
+            'email' => 'jcmdomtz_2283@hotmail.com',
+            'email_verified_at' => now(),
+            'password' => Hash::make('aserradero2025'),
+            "image" => "usuarios/usuario.jpg",
+            'remember_token' => \Str::random(10),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        // Asignar rol
+        $usuario->assignRole('admin'); // O 'jefepatio'
     }
 }
