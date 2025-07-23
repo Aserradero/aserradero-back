@@ -174,22 +174,40 @@ class RawMaterialController extends Controller
     }
 
 
-   public function getGroupedRawMaterials()
-{
-    $grouped = DB::table('raw_materials')
-        ->select(
-            'calidad',
-            DB::raw('SUM(metroCR) as total_metroCR'),
-            DB::raw('COUNT(*) as total_rollos'),
-            DB::raw('MAX(created_at) as created_at')
-        )
-        ->whereNull('identificadorP') // Solo materia prima
-        ->groupBy('calidad')
-        ->orderBy('calidad')
-        ->get();
+    public function getGroupedRawMaterials()
+    {
+        $rawMaterials = DB::table('raw_materials')
+            ->select(
+                'calidad',
+                DB::raw('SUM(metroCR) as total_metroCR'),
+                DB::raw('COUNT(*) as total_rollos'),
+                DB::raw('MAX(created_at) as created_at')
+            )
+            ->whereNull('identificadorP') // Solo materia prima
+            ->groupBy('calidad')
+            ->orderBy('calidad')
+            ->get()
+            ->keyBy('calidad'); // Convertimos a colección indexada por 'calidad'
 
-    return response()->json($grouped);
-}
+        $calidadesEsperadas = ['Primera', 'Segunda', 'Tercera'];
+        $response = [];
+
+        foreach ($calidadesEsperadas as $calidad) {
+            if ($rawMaterials->has($calidad)) {
+                $response[] = $rawMaterials[$calidad];
+            } else {
+                // Si no existe, creamos manualmente un objeto con valores en 0
+                $response[] = (object) [
+                    'calidad' => $calidad,
+                    'total_metroCR' => 0,
+                    'total_rollos' => 0,
+                    'created_at' => now()->toDateTimeString()
+                ];
+            }
+        }
+
+        return response()->json($response);
+    }
 
 
 
