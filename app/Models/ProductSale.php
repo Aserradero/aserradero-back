@@ -12,7 +12,7 @@ class ProductSale extends Model
         'cantidad',
         'producto_id',
         'sale_id',
-        'precioHistorico'
+        'precioh'
 
     ];
 

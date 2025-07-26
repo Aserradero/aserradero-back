@@ -53,7 +53,7 @@
                         'cantidad' => $producto['cantidad'],
                         'producto_id' => $producto['producto_id'], // producto que eligió el usuario
                         'sale_id' => $venta->id,
-                        'precioHistorico'=>$producto['precioHistorico'] // precio histórico del producto
+                        'precioh'=>$producto['precioh'] // precio histórico del producto
                     ]);
 
                     // 2.2 Obtener características físicas del producto base
