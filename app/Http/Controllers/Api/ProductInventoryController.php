@@ -124,7 +124,7 @@ class ProductInventoryController extends Controller
             'stockIdealPT' => 'required|numeric',
         ]);
 
-        // Buscar productos que coincidan con las características
+        // Buscar productos del inventario según sus características
         $productos = ProductInventory::whereHas('product', function ($query) use ($request) {
             $query->where('calidad', $request->calidad)
                 ->where('grosor', $request->grosor)
@@ -132,16 +132,28 @@ class ProductInventoryController extends Controller
                 ->where('largo', $request->largo);
         })->get();
 
-        // Actualizar cada producto
+        // Contador para catálogo actualizado
+        $catalogosActualizados = 0;
+
         foreach ($productos as $producto) {
+            // Actualizar el inventario
             $producto->precioUnitario = $request->precioUnitario;
             $producto->stockIdealPT = $request->stockIdealPT;
             $producto->save();
+
+            // También actualiza el precio en el catálogo asociado al producto
+            if ($producto->product && $producto->product->catalogProduct) {
+                $catalog = $producto->product->catalogProduct;
+                $catalog->precioUnitario = $request->precioUnitario;
+                $catalog->save();
+                $catalogosActualizados++;
+            }
         }
 
         return response()->json([
-            'message' => 'Productos actualizados correctamente',
-            'cantidad' => count($productos)
+            'message' => 'Productos e ítems del catálogo actualizados correctamente',
+            'productos_actualizados' => count($productos),
+            'catalogos_actualizados' => $catalogosActualizados
         ], 200);
     }
 
