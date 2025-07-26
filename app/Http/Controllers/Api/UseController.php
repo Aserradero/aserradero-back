@@ -210,7 +210,7 @@ public function login(Request $request)
         $tokenPlainText = $tokenObj->plainTextToken;
         $tokenModel = $tokenObj->accessToken;
 
-        $expiresAt = now()->addMinutes(1); // Cambia a lo que desees
+        $expiresAt = now()->addMinutes(60); // Cambia a lo que desees
 
         $tokenModel->update([
             'expires_at' => $expiresAt,
