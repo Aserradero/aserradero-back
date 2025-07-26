@@ -16,6 +16,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->double('cantidad',16,5);
+             $table->double('precioHistorico',16,5);
             $table->foreignId('producto_id')->constrained('products')->onDelete('restrict');
             $table->foreignId('sale_id')->constrained('sales')->onDelete('restrict');
             

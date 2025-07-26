@@ -11,7 +11,8 @@ class ProductSale extends Model
     protected $fillable = [
         'cantidad',
         'producto_id',
-        'sale_id'
+        'sale_id',
+        'precioHistorico'
 
     ];
 
