@@ -12,8 +12,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        //$schedule->command('sanctum:clean-expired-tokens')->hourly();
-        $schedule->command('app:delete-expired-tokens')->everyMinute();
+        $schedule->command('tokens:limpiar-expirados')->everyMinute();
+
 
     }
 

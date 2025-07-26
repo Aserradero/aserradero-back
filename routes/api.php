@@ -79,7 +79,7 @@ Route::controller(UseController::class)->group(function () {
 });
 
 //El usuario debe de estar autenticado para cerrar sesion
-Route::middleware('auth:sanctum')->post('/logout', [UseController::class, 'logout']);
+Route::post('/logout', [UseController::class, 'logout']);
 //Route::post('/logout', [UseController::class, 'logout']);
 
 

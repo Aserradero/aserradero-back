@@ -3,13 +3,14 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\PersonalAccessToken;
 use Illuminate\Support\Facades\Hash;
 use Psy\Readline\Hoa\Console;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Http\Controllers\EmailController;
+use Laravel\Sanctum\PersonalAccessToken;
+
 
 
 class UseController extends Controller
@@ -58,7 +59,7 @@ class UseController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $user = User::findOrFail($id); 
+        $user = User::findOrFail($id);
 
         $user->name = $request->name;
         $user->apellidos = $request->apellidos;
@@ -177,67 +178,67 @@ class UseController extends Controller
         }
     }
         */
-    public function login(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|string|min:6'
+public function login(Request $request)
+{
+    $request->validate([
+        'email' => 'required|email',
+        'password' => 'required|string|min:6'
+    ]);
+
+    if (!Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+        return response()->json([
+            'message' => 'Credenciales incorrectas'
+        ], 401);
+    }
+
+    try {
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json(['message' => 'Usuario no encontrado'], 404);
+        }
+
+        // Bloquea múltiples sesiones activas
+        if ($user->tokens()->where('name', 'AuthToken')->exists()) {
+            return response()->json([
+                'message' => 'Ya tienes una sesión activa.'
+            ], 403);
+        }
+
+        // Crear token y establecer expiración
+        $tokenObj = $user->createToken('AuthToken');
+        $tokenPlainText = $tokenObj->plainTextToken;
+        $tokenModel = $tokenObj->accessToken;
+
+        $expiresAt = now()->addMinutes(1); // Cambia a lo que desees
+
+        $tokenModel->update([
+            'expires_at' => $expiresAt,
         ]);
 
-        // Verifica credenciales
-        if (!Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-            return response()->json([
-                'message' => 'Credenciales incorrectas'
-            ], 401);
-        }
+        return response()->json([
+            'message' => 'Login exitoso',
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'apellidos' => $user->apellidos,
+                'telefono' => $user->telefono,
+                'nombreUsuario' => $user->nombreUsuario,
+                'genero' => $user->genero,
+                'email' => $user->email,
+                'role' => $user->getRoleNames()->first()
+            ],
+            'token' => $tokenPlainText,
+            'expires_at' => $expiresAt->toISOString()
+        ], 200);
 
-        try {
-            $user = Auth::user();
-
-            if (!$user) {
-                return response()->json(['message' => 'Usuario no encontrado'], 404);
-            }
-
-
-            // ESTE IF BLOQUEA EL LOGIN SI YA TIENE UNA SESIÓN ACTIVA
-            if ($user->tokens()->where('name', 'AuthToken')->exists()) {
-                return response()->json([
-                    'message' => 'Ya tienes una sesión activa.'
-                ], 403);
-            }
-
-            //  Solo si no tiene token, se crea uno nuevo
-            $token = $user->createToken('AuthToken')->plainTextToken;
-
-            //asignandole una fecha de expiración
-            /*Tiempo de vida de token desactivado, activarlo cuando actives esta opcion
-            $user->tokens()->latest()->first()->update([
-                'expires_at' => now()->addMinutes(1),
-            ]);
-            */
-
-            return response()->json([
-                'message' => 'Login exitoso',
-                'user' => [
-                    'id' => $user->id,
-                    'name' => $user->name,
-                    'apellidos' => $user->apellidos,
-                    'telefono' => $user->telefono,
-                    'nombreUsuario' => $user->nombreUsuario,
-                    'genero' => $user->genero,
-                    'email' => $user->email,
-                    'role' => $user->getRoleNames()->first()
-                ],
-                'token' => $token
-            ], 200);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al generar el token',
-                'error' => $e->getMessage()
-            ], 500);
-        }
+    } catch (\Exception $e) {
+        return response()->json([
+            'message' => 'Error al generar el token',
+            'error' => $e->getMessage()
+        ], 500);
     }
+}
 
 
 
@@ -270,20 +271,34 @@ class UseController extends Controller
         */
     public function logout(Request $request)
     {
-        $user = $request->user();
+        $tokenString = $request->bearerToken();
 
-        if (!$user) {
-            return response()->json(['message' => 'Usuario no autenticado'], 401);
+        if (!$tokenString) {
+            return response()->json(['message' => 'Token no proporcionado'], 401);
         }
 
-        // Elimina todos los tokens del usuario
-        $user->tokens->each(function ($token) {
-            $token->delete();
-        });
+        if (!str_contains($tokenString, '|')) {
+            return response()->json(['message' => 'Formato de token inválido'], 401);
+        }
 
-        return response()->json(['message' => 'Sesión cerrada correctamente.']);
+        [$id, $plainToken] = explode('|', $tokenString, 2);
+
+        $token = PersonalAccessToken::where('id', $id)
+            ->where('token', hash('sha256', $plainToken))
+            ->first();
+
+        if (!$token) {
+            return response()->json(['message' => 'Token inválido o ya eliminado'], 401);
+        }
+
+        $user = $token->tokenable;
+        $token->delete();
+
+        return response()->json([
+            'message' => 'Sesión cerrada correctamente',
+            'usuario_id' => $user->id ?? null,
+        ]);
     }
-
 
     public function updateRegister(Request $request, string $email)
     {
@@ -329,7 +344,7 @@ class UseController extends Controller
     }
 
 
-    
+
 
 
 
